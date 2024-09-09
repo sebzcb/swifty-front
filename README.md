@@ -11,7 +11,7 @@ Este proyecto proporciona una configuración mínima para que React funcione en 
 
 1. Clonar el repositorio:
     ```bash
-    git clone <URL_DEL_REPOSITORIO>
+    git clone https://github.com/sebzcb/swifty-front
     ```
 
 2. Instalar las dependencias:
@@ -24,7 +24,7 @@ Este proyecto proporciona una configuración mínima para que React funcione en 
     npm run dev
     ```
 
-4. Construir el proyecto para producción:
+4. Si se quiere construir el proyecto para producción:
     ```bash
     npm run build
     ```
