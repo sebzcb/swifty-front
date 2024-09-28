@@ -1,15 +1,18 @@
 import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import FilterGroup from './FilterGroup';
+import { getAsignaturasService } from '../services/asignaturasServices';
 
 const Filtros = () => {
   const [universidades, setUniversidades] = useState([]);
   const [asignaturas,setAsignaturas] = useState([]);
   const [valoraciones, setValoraciones] = useState([]);
   const loadAsignaturas = async () => {
-    const res = await axios.get(`${import.meta.env.VITE_BACK_URL}asignaturas`);
-    console.log(res.data);
-    setAsignaturas(res.data);
+    getAsignaturasService().then((res) => {
+      setAsignaturas(res.data);
+    }).catch((error) => {
+      console.error('Hubo un problema al realizar la solicitud:', error);
+    });
   }
   const loadUniversidades = async () => {
     const res = await axios.get(`${import.meta.env.VITE_BACK_URL}universidades`);
@@ -19,9 +22,13 @@ const Filtros = () => {
   const loadValoraciones = () => {
     const valoracionesJSON = [
       {id: 1, nombre: "1 estrella"},
+      {id:1.5, nombre: "1.5 estrellas"},
       {id: 2, nombre: "2 estrellas"},
+      {id: 2.5, nombre: "2.5 estrellas"},
       {id: 3, nombre: "3 estrellas"},
+      {id: 3.5, nombre: "3.5 estrellas"},
       {id: 4, nombre: "4 estrellas"},
+      {id: 4.5, nombre: "4.5 estrellas"},
       {id: 5, nombre: "5 estrellas"}
     ];
     const res = valoracionesJSON;

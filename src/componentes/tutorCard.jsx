@@ -1,7 +1,8 @@
 import { Card, CardContent, CardMedia, Box, Typography, Button, Rating } from '@mui/material';
-import { styled } from '@mui/system';
+import { minHeight, styled } from '@mui/system';
 import SchoolIcon from '@mui/icons-material/School';
 import perfil from '../assets/perfil.jpg';
+import useIsMobile from '../utils/useIsMobile';
 
 const StyledCard = styled(Card)({
   marginBottom: '20px',
@@ -27,14 +28,19 @@ const StyledButton = styled(Button)({
 });
 
 const TutorCard = ({ nombre, descripcion, universidad, precioPorHora, valoracion, asignaturas, onClick }) => {
+  const isMobile = useIsMobile();
   return (
     <StyledCard onClick={onClick}>
-      <StyledCardMedia
-        component="img"
-        alt="Tutor"
-        image={perfil}
-        title="Tutor"
-      />
+      {
+        !isMobile &&
+        <StyledCardMedia
+          component="img"
+          alt="Tutor"
+          image={perfil}
+          title="Tutor"
+          sx={{ minWidth: '50px', minHeight: '50px' }}
+        />
+      }
       <StyledCardContent>
         <Typography variant="h5" component="div">
           {nombre}
@@ -54,7 +60,7 @@ const TutorCard = ({ nombre, descripcion, universidad, precioPorHora, valoracion
             </Box>
           </Box>
           <Box textAlign="right">
-            <Rating value={valoracion} readOnly />
+            <Rating value={valoracion} readOnly precision={0.5} />
             <Typography variant="body2">Recomendado</Typography>
             {precioPorHora ? <Typography variant="h6">Desde {precioPorHora}$/hora</Typography> : <Typography variant="h6"> Sin tutorias </Typography>}
             <StyledButton variant="contained" color="primary">Solicitar tutoría</StyledButton>

@@ -22,7 +22,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="/">
-        Your Website
+        Swifty
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -123,7 +123,7 @@ function Registro() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign Up
+            Registrarse
           </Typography>
           <Box component="form" onSubmit={handleRegister} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -181,11 +181,11 @@ function Registro() {
             </TextField>
             <FormControlLabel
               control={<Checkbox checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} color="primary" />}
-              label="I agree with the terms and conditions."
+              label="Acepto terminos y condiciones."
             />
             {errors.terms && <Typography color="error" variant="body2">{errors.terms}</Typography>}
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-              Sign Up
+              Registrarse
             </Button>
           </Box>
         </Box>

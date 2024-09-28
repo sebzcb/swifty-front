@@ -13,7 +13,6 @@ const HorarioVer = ({data, handleOpen, usuario, days, times }) => {
                     <Button onClick={handleOpen} startIcon={<EditIcon />}>Editar horario</Button> :
                     null
             }
-            <Typography variant="h6">Horario</Typography>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, MenuItem, Autocomplete, CircularProgress } from '@mui/material';
 import axios from 'axios';
+import { getEstudiantesSolicitudesDeTutor } from '../services/tutoresServices';
 
 const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
     const [formData, setFormData] = useState({
@@ -103,9 +104,11 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
     }, [open]);
     const loadUsuarios = async () => {
         const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
-        const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/solicitudes/estudiantes`,{id_tutor});
-        console.log("res:",res.data);
-        setEstudiantes([...res.data]);
+        getEstudiantesSolicitudesDeTutor(id_tutor).then((res) => {
+            setEstudiantes([...res]);
+        }).catch((error) => {
+            console.error('Hubo un problema al realizar la solicitud:', error);
+        });
     }
     useEffect(() => {
         loadUsuarios();

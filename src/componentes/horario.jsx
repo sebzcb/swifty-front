@@ -35,6 +35,7 @@ const Horario = () => {
     axios.put(`${import.meta.env.VITE_BACK_URL}horario/${idUsuario}`,
       { horario: horariosOcupados })
       .then(response => console.log('Horario actualizado:', response))
+      .then(() => handleClose())
       .catch(error => console.error('Error al actualizar el horario:', error));
   };
 

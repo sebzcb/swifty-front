@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { TextField, Select, MenuItem, Button, Dialog, DialogTitle, DialogContent, DialogActions, Box } from "@mui/material";
+import { validatePhone } from "../utils/validatePhone";
 
-const EditarPerfilModal = ({ open, setOpen, id_usuario }) => {
+const EditarPerfilModal = ({ open, setOpen, id_usuario,renderFunction }) => {
     const [universidades, setUniversidades] = useState([]);
     const [usuario, setUsuario] = useState(null);
 
@@ -38,12 +39,21 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario }) => {
             [event.target.name]: event.target.value
         });
     }
-
     const handleSubmit = async () => {
+        //check data
+        if(!usuario) return;
+        const telephone = usuario.telefono;
+        const validatePhoneCheck = validatePhone(telephone);
+        console.log("TELEFONO:", telephone);
+        if (!validatePhoneCheck) {
+            alert("El teléfono debe tener el formato +56912345678");
+            return;
+        }
         try {
             const res = await axios.put(`${import.meta.env.VITE_BACK_URL}usuario/update`, usuario);
             console.log("RES:", res.data);
             setOpen(false);
+            renderFunction();
         } catch (error) {
             console.error('Error al actualizar el perfil:', error);
         }

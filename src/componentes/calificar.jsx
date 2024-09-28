@@ -2,6 +2,7 @@ import  { useState, useEffect } from 'react';
 import { Modal, Box, Typography, TextField, Button, IconButton, Rating } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import { useSnackContext } from '../context/SnackContext';
 
 const style = {
   position: 'absolute',
@@ -20,7 +21,7 @@ const Calificar = ({ open, handleClose, idUsuario }) => {
   const [comentario, setComentario] = useState('');
   const [error, setError] = useState('');
   const [ticket, setTicket] = useState(null);
-
+  const {openSnack } = useSnackContext();
   useEffect(() => {
     const obtenerCalificacionPrevio = async () => {
       try {
@@ -37,7 +38,7 @@ const Calificar = ({ open, handleClose, idUsuario }) => {
         }
       } catch (error) {
         console.error('Error al obtener la calificación previa:', error);
-        alert('Hubo un problema al obtener la calificación previa.');
+        openSnack('Hubo un problema al obtener la calificación previa.', 'error');
       }
     };
 
@@ -64,11 +65,11 @@ const Calificar = ({ open, handleClose, idUsuario }) => {
       const response = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/calificar`, datosCalificacion);
       setTicket(response.data.ticket);
       handleClose();
-      alert('Calificación enviada correctamente.');
+      openSnack('Calificación enviada', 'success');
     } catch (error) {
       console.error('Error al enviar la calificación:', error);
       setError('Hubo un problema al enviar la calificación. Por favor, inténtelo de nuevo.');
-      alert('Hubo un problema al enviar la calificación.');
+      openSnack('Hubo un problema al enviar la calificación. Por favor, inténtelo de nuevo.', 'error');
     }
   };
 

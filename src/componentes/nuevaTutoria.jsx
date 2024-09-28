@@ -7,6 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useSnackContext } from '../context/SnackContext';
 
 const style = {
   position: 'absolute',
@@ -27,6 +28,7 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
   const [asignaturas, setAsignaturas] = useState([]); // Añade un nuevo estado para almacenar las asignaturas 
   const [asignaturaElegida, setAsignaturaElegida] = useState(''); // Añade un nuevo estado para almacenar la asignatura elegida
   const [descripcion, setDescripcion] = useState('');
+  const { openSnack } = useSnackContext();
   const getAsignaturas = async () => {
     const res = await axios.get(`${import.meta.env.VITE_BACK_URL}asignaturas`);
     console.log(res.data);
@@ -54,7 +56,7 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
 
     console.log(res.data);
     handleClose();
-    alert('Solicitud enviada correctamente');
+    openSnack('Solicitud enviada', 'success');
   }
 
 

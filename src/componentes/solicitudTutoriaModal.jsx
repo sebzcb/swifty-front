@@ -1,5 +1,6 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import axios from "axios";
+import { useSnackContext } from "../context/SnackContext";
 
 const SolicitudTutoriaModal = ({
     setOpenModal,
@@ -12,6 +13,7 @@ const SolicitudTutoriaModal = ({
     descripcion,
     renderSolicitudes
 }) => {
+    const { openSnack } = useSnackContext();
     const rechazo = 'Rechazado';
     const aceptado = 'Aceptado';
     // En SolicitudTutoriaModal.js
@@ -20,6 +22,7 @@ const SolicitudTutoriaModal = ({
         try {
             await axios.put(`${import.meta.env.VITE_BACK_URL}usuario/solicitudes/solicitud/estado/actualizar`, { id_solicitud: id, estado: rechazo });
             setOpenModal(false);
+            openSnack('Solicitud rechazada', 'error');
             await renderSolicitudes();
         } catch (error) {
             console.error('There was an error!', error);
@@ -31,6 +34,7 @@ const SolicitudTutoriaModal = ({
         try {
             await axios.put(`${import.meta.env.VITE_BACK_URL}usuario/solicitudes/solicitud/estado/actualizar`, { id_solicitud: id, estado: aceptado });
             setOpenModal(false);
+            openSnack('Solicitud aceptada', 'success');
             await renderSolicitudes();
         } catch (error) {
             console.error('There was an error!', error);

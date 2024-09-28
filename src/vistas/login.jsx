@@ -77,24 +77,24 @@ function Login() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign in
+                    Iniciar sesión
                 </Typography>
                 <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
                     <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus/>
                     <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password"/>
-                    <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me"/>
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                        Sign In
+{/*                    <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me"/>
+*/}                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                        Iniciar sesión	
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
-                            Forgot password?
+                            <Link href="recuperarcontrasena" variant="body2">
+                            ¿Olvidaste tu contraseña?
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2">
-                            {"Don't have an account? Sign Up"}
+                            <Link href="registro" variant="body2">
+                            {"¿No tienes cuenta? Registrate"}
                             </Link>
                         </Grid>
                     </Grid>

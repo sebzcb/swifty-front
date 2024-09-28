@@ -1,71 +1,93 @@
-import { 
-    Typography, Container, 
-    Grid, Card, CardContent
+import {
+    Typography, Container,
+    Grid, Card, CardContent, Box
 } from '@mui/material';
 import NavBar from '../componentes/navBar';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BusquedaBarra from '../componentes/busquedaBarra';
+import { getAsignaturasService } from '../services/asignaturasServices';
 
 function Home() {
     const navigate = useNavigate();
     const [tutores, getTutores] = useState(null);
-
+    const [asignaturas, setAsignaturas] = useState([]);
     const hanlerPerfil = (id) => {
         navigate('/' + id);
     }
+    const getAsignaturas = async () => {
+        getAsignaturasService().then((res) => {
+            setAsignaturas(res.data);
+        }).catch((error) => {
+            console.error('Hubo un problema al realizar la solicitud:', error);
+        });
+    };
     useEffect(() => {
         const getTutoresBackend = async () => {
             await axios.get(`${import.meta.env.VITE_BACK_URL}usuario/lista/tutores`)
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error('Hubo un problema al realizar la solicitud.');
-                    return;
-                }
-                const data = response.data;
-                // console.log(data);
-                getTutores(data);
-            }).catch((error) => {
-                console.error('Hubo un problema al realizar la solicitud:', error);
-            });
+                .then((response) => {
+                    if (response.status !== 200) {
+                        throw new Error('Hubo un problema al realizar la solicitud.');
+                        return;
+                    }
+                    const data = response.data;
+                    getTutores(data);
+                }).catch((error) => {
+                    console.error('Hubo un problema al realizar la solicitud:', error);
+                });
         }
         getTutoresBackend();
+        getAsignaturas();
     }, []);
+    const CardHome = ({ nombre ,codigo}) => {
+        //http://localhost:5173/search?keyword=d&page=1&limit=9&order=valoracion&direction=desc&asignaturas=
+        return (
+            <Card sx={{
+                ":hover": {
+                    cursor: 'pointer',
+                    boxShadow: '0 0 10px rgba(0,0,0,0.2)'
+                }
+            }}
+        
+                onClick={() => navigate('/search?&asignaturas='+codigo)}
+            >
+                <CardContent>
+                    <Typography variant="h6" align="center">
+                       {nombre}
+                    </Typography>
+                </CardContent>
+            </Card>
+        );
+    }
     return (
         <>
-            <NavBar/>
+            <NavBar />
             {/* Contenido principal */}
             <Container style={{ marginTop: '20px' }}>
-                <Typography variant="h4" align="center">
+                <Typography variant="h4" align="center" gutterBottom>
                     Encuentra tu tutor perfecto en Swifty!
                 </Typography>
                 <Typography variant="subtitle1" align="center" style={{ marginBottom: '20px' }}>
                     1,480,086 tutores listos para ayudarte con tus exámenes!
                 </Typography>
 
-                <BusquedaBarra isHomePage={true}/>
+                <Box mb={4}>
+                    <BusquedaBarra isHomePage={true} />
+                </Box>
+
                 {/* Categorías Populares */}
                 <Typography variant="h5" style={{ marginBottom: '20px' }}>
-                    Categorías populares
+                    Asignaturas populares
                 </Typography>
-                <Grid container spacing={2}>
-                    {[...Array(6)].map((_, index) => (
-                    <Grid item xs={4} key={index}>
-                        <Card sx={{":hover": {
-                            cursor: 'pointer',
-                            boxShadow: '0 0 10px rgba(0,0,0,0.2)'
-                        }}}
-                            onClick={() => navigate('/busqueda')}
-                        >
-                        <CardContent>
-                                <Typography variant="h6" align="center">
-                                Matemáticas 23
-                                </Typography>
-                        </CardContent>
-                        </Card>
-                    </Grid>
-                    ))}
+                <Grid container spacing={2} mb={4}>
+                    {
+                        asignaturas.map((asignatura, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <CardHome nombre={asignatura?.nombreasignatura} codigo={asignatura.codigo}/>
+                            </Grid>
+                        ))
+                    }
                 </Grid>
 
                 {/* Tutores con mejor valoración */}
@@ -74,26 +96,28 @@ function Home() {
                 </Typography>
                 <Grid container spacing={2}>
                     {tutores?.map((tutor, index) => (
-                    <Grid item xs={2} key={index}>
-                        <Card sx={{":hover": {
-                            cursor: 'pointer',
-                            boxShadow: '0 0 10px rgba(0,0,0,0.2)'
-                        }}}
-                            onClick={()=>{hanlerPerfil(tutor.id)}}
-                        >
-                            <CardContent>
-                                <Typography variant="h6" align="center">
-                                {tutor.nombre}
-                                </Typography>
-                                <Typography variant="subtitle1" align="center">
-                                PUCV
-                                </Typography>
-                                <Typography variant="subtitle2" align="center">
-                                {tutor.correo}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                        <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
+                            <Card sx={{
+                                ":hover": {
+                                    cursor: 'pointer',
+                                    boxShadow: '0 0 10px rgba(0,0,0,0.2)'
+                                }
+                            }}
+                                onClick={() => { hanlerPerfil(tutor.id) }}
+                            >
+                                <CardContent>
+                                    <Typography variant="h6" align="center">
+                                        {tutor.nombre}
+                                    </Typography>
+                                    <Typography variant="subtitle1" align="center">
+                                        PUCV
+                                    </Typography>
+                                    <Typography variant="subtitle2" align="center">
+                                        {tutor.correo}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
                 </Grid>
             </Container>

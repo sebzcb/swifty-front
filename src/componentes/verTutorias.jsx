@@ -1,6 +1,6 @@
 // src/components/VerTutorias.js
 import { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Icon, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Icon, Box, Typography } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -34,10 +34,14 @@ function VerTutorias() {
 
   const loadTutorias = async () => {
     console.log('Cargar tutorias');
-    const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
-    const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/lista/tutorias`, { id_tutor });
-    console.log(res.data);
-    setTutorias(res.data);
+    try {
+      const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
+      const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/lista/tutorias`, { id_tutor });
+      console.log(res.data);
+      setTutorias(res.data);
+    } catch (error) {
+      console.error('Error al cargar tutorias:', error);
+    }
   }
   useEffect(() => {
     loadTutorias();
@@ -78,15 +82,32 @@ function VerTutorias() {
       console.error('Error al editar tutoria:', error);
     }
   }
-  
+
   return (
     <>
       {openModal && <ModalTutoria setOpenModal={setOpenModal} loadTutorias={loadTutorias} />}
       {openModalEliminar && <ConfirmarEliminarTutoriaModal setOpenModalEliminar={setOpenModalEliminar} handleEliminarTutoria={handleEliminarTutoria} />}
       {openModalEditar && <EditarTutoriaModal setOpenModalEditar={setOpenModalEditar} tutoria={tutoriaSeleccionadaEditar} handleEditarTutoria={handleEditarTutoria} />}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button onClick={handleCrearTutoria}>Crear tutoria</Button>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-start' ,pb:2}}>
+        <Button
+          onClick={handleCrearTutoria}
+          sx={{
+            backgroundColor: 'primary.main',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'primary.dark'
+            },
+            padding: '10px 20px',
+            borderRadius: '8px',
+            textTransform: 'none'
+          }}
+        >
+          Crear tutoria
+        </Button>
       </Box>
+      <Typography variant="body2" sx={{ fontWeight: 'bold'}}  gutterBottom>
+        Los estudiantes a los que les hayas aceptado la solicitud podrán ser agregados a tus tutorías creadas.
+      </Typography>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

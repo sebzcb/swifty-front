@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Box, TextField, Button, Select, MenuItem } from '@mui/material';
+import { Modal, Box, TextField, Button, Select, MenuItem, Typography } from '@mui/material';
 
 const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }) => {
     const [descripcion, setDescripcion] = useState(tutoria.descripcion);
@@ -13,25 +13,28 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
         // Aquí puedes manejar la lógica para guardar los cambios
         console.log('Guardar cambios', descripcion, modalidad, fecha, horaInicio, horaFin, maxEstudiantes);
         setOpenModalEditar(false);
-        await handleEditarTutoria(descripcion,modalidad,fecha,horaInicio,horaFin,maxEstudiantes);
+        await handleEditarTutoria(descripcion, modalidad, fecha, horaInicio, horaFin, maxEstudiantes);
     };
 
     return (
         <Modal open={true} onClose={() => setOpenModalEditar(false)}>
-            <Box sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 p: 2,
-                position: 'absolute', 
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -50%)', 
-                bgcolor: 'background.paper', 
-                boxShadow: 24, 
-                borderRadius: 2 
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                borderRadius: 2,
+                width: 400
             }}>
-                <h1>Editar Tutoría</h1>
+                <Typography id="modal-title" variant="h6" component="h2">
+                    Editar Tutoria
+                </Typography>
                 <TextField
                     label="Descripción"
                     value={descripcion}
@@ -94,12 +97,14 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
                     fullWidth
                     InputProps={{ inputProps: { min: 0, max: 100 } }}
                 />
+                <Box sx={{display:'flex',gap:'10px'}}>
+                <Button onClick={() => { setOpenModalEditar(false) }} color="primary" variant="contained" sx={{ mt: 2 }}>
+                    Cancelar
+                </Button>
                 <Button onClick={handleGuardar} color="primary" variant="contained" sx={{ mt: 2 }}>
-                    Guardar 
+                    Guardar
                 </Button>
-                <Button onClick={()=>{setOpenModalEditar(false)}} color="primary" variant="contained" sx={{ mt: 2 }}>
-                    Cancelar 
-                </Button>
+                </Box>
             </Box>
         </Modal>
     );

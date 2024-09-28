@@ -1,12 +1,12 @@
 import { AppBar, Toolbar, Typography, Button, Container, IconButton, Avatar, Badge, Menu, MenuItem } from '@mui/material';  
 import SchoolIcon from '@mui/icons-material/School';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import { deepOrange } from '@mui/material/colors';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SolicitudSerTutor from './solicitudSerTutor';
+import SolicitudSerTutorv2 from './solicitudSerTutorv2';
 
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
@@ -98,11 +98,7 @@ function Navbar() {
                             <Button color="inherit" onClick={registro}>Regístrate</Button>
                         </> :
                         <>
-                            <IconButton color="inherit"> 
-                                <Badge badgeContent={4} color="success">
-                                    <NotificationsIcon/>
-                                </Badge> 
-                            </IconButton>
+                         
                             
 
                             <IconButton 
@@ -133,7 +129,7 @@ function Navbar() {
                 </Toolbar>
                 
             </AppBar>
-            <SolicitudSerTutor open={openModal} handleClose={handleCloseTutor}/>
+            <SolicitudSerTutorv2 open={openModal} handleClose={handleCloseTutor}/>
         </>
 
        

@@ -2,6 +2,7 @@ import  { useState } from 'react';
 import { Modal, Box, Typography, TextField, MenuItem, Button, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import { useSnackContext } from '../context/SnackContext';
 
 const style = {
   position: 'absolute',
@@ -21,6 +22,7 @@ const Report = ({ open, handleClose, idUsuario }) => {
   const [imagenes, setImagenes] = useState([]);
   const [error, setError] = useState('');
   const [ticket, setTicket] = useState(null);
+  const {openSnack} = useSnackContext();
   
   const motivosReporte = ['Acoso', 'Spam', 'Contenido inapropiado', 'Otros'];
 
@@ -47,10 +49,10 @@ const Report = ({ open, handleClose, idUsuario }) => {
       console.log(res.data);
       setTicket(res.data.ticket);
       handleClose();
-      alert('Reporte enviado con éxito');
+      openSnack('Reporte enviado con éxito', 'success');
     } catch (error) {
       console.error('Error al enviar el reporte:', error);
-      setError('Hubo un problema al enviar el reporte. Por favor, inténtelo de nuevo.');
+      openSnack('Hubo un problema al enviar el reporte.', 'error');
     }
   };
 

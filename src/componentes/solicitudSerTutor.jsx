@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { Box, Button, Modal, TextField, Typography, IconButton, Autocomplete } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useSnackContext } from '../context/SnackContext';
 
 const style = {
   position: 'absolute',
@@ -17,7 +18,11 @@ const style = {
 const SolicitudSerTutor = ({open, handleClose}) => {
   const [subjects, setSubjects] = useState(['Arquitectura de hardware', 'Redeszzz']);
   const [newSubject, setNewSubject] = useState('');
-
+  const { openSnack } = useSnackContext();
+  const handleSubmit = () => {
+    handleClose();
+    openSnack('Solicitud enviada', 'success');
+  }
   const handleAddSubject = () => {
     if (newSubject && !subjects.includes(newSubject)) {
       setSubjects([...subjects, newSubject]);
@@ -68,7 +73,7 @@ const SolicitudSerTutor = ({open, handleClose}) => {
               margin="normal"
             />
           </Box>
-          <Button variant="contained" color="primary" fullWidth>
+          <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
             Enviar solicitud
           </Button>
         </Box>

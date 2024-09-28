@@ -8,11 +8,32 @@ import { useNavigate } from 'react-router-dom';
 import { useSearchContext } from '../context/searchContext';
 import LoadingComponent from '../utils/LoadingComponente';
 import { Sort } from '@mui/icons-material';
+import useIsMobile from '../utils/useIsMobile';
 
 const BusquedaVista = () => {
   const { search, searchParams, searchResults, dataShow, loading, updateSearchParams, DIRECTION, ORDER } = useSearchContext();
+  //elimina duplicados de asignaturas
+  const formatedResults = searchResults.map((result) => {
+    let resultsAux = result.asignaturas; //array 
+    if(!resultsAux) return result;
+  //  console.log("Asignaturas:", resultsAux);
+    const asignaturasArray = resultsAux.split(',');
+    //console.log("Asignaturas:", asignaturasArray);
+    //eliminar duplicados del array
+    const asignaturasSet = new Set(asignaturasArray);
+    //console.log("Asignaturas:", asignaturasSet);
+    //convertir array a string
+    const stringFinal = [...asignaturasSet].join(', ');
+    //console.log("Asignaturas:", stringFinal);
+    resultsAux = stringFinal;
+    return {
+      ...result,
+      asignaturas: resultsAux
+    }
+  });
+
   const navigate = useNavigate();
-  const [orderSelected, setOrderSelected] = useState(0);
+  const [orderSelected, setOrderSelected] = useState(1);
   const handlerPerfil = (id) => {
     console.log('ID:', id);
     navigate('/' + id);
@@ -37,8 +58,8 @@ const BusquedaVista = () => {
     updateSearchParams(orderObject);
   };
   const OrderForm = () => (
-    <FormControl size='medium'>
-      <InputLabel id="demo-simple-select-label" sx={{ display: 'flex', gap: '10px' }}>
+    <FormControl size='medium' sx={{ width: '200px' }}>
+      <InputLabel id="demo-simple-select-label" sx={{ display: 'flex', gap: '10px', width: '100%' }}>
         <Sort />
         Ordenar por
       </InputLabel>
@@ -53,41 +74,54 @@ const BusquedaVista = () => {
       </Select>
     </FormControl>
   );
+  const isMobile = useIsMobile();
   if (loading) {
     return <LoadingComponent />;
   }
   return (
     <>
       <Navbar />
-      <Container>
+      <Container sx={{ pt: '20px' }}>
         <BusquedaBarra isHomePage={false} />
-        <Box sx={{ display: 'flex' }}>
-          {searchResults.length > 0 && (
-            <Box component="aside" sx={{ width: 250, borderRight: 1, borderColor: 'divider', p: 2 }}>
+        {
+          isMobile && formatedResults.length > 0 && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingTop:'20px' }}>
               <Filtros />
+              <OrderForm />
             </Box>
-          )}
+          )
+        }
+        <Box sx={{ display: 'flex' }}>
+          {
+            !isMobile && formatedResults.length > 0 && (
+              <Box component="aside" sx={{ width: 250, borderRight: 1, borderColor: 'divider', p: 2 }}>
+                <Filtros />
+              </Box>
+            )
+          }
           <Box sx={{ flexGrow: 1, p: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Box>
                 <Typography variant='h1' gutterBottom sx={{ wordBreak: 'break-word' }}> {dataShow.keyword} </Typography>
                 <Typography variant="subtitle1" gutterBottom> {dataShow.totalResults} resultados encontrados </Typography>
               </Box>
-              {searchResults.length > 0 && <OrderForm />}
+              {!isMobile && formatedResults.length > 0 && <OrderForm />}
             </Box>
-            <Box container spacing={2} component={'ul'}>
-              {searchResults.length > 0 ? searchResults.map((result, index) => (
+            <Box container spacing={2} component={'ul'} sx={{
+              listStyleType: 'none',
+            }}>
+              {formatedResults.length > 0 ? formatedResults.map((result, index) => (
                 <Box component={'li'} key={index}>
-                    <TutorCard
-                      key={index}
-                      nombre={result.nombre}
-                      descripcion={result.descripcion}
-                      universidad={result.universidad}
-                      precioPorHora={result.precioporhora}
-                      valoracion={result.valoracion_promedio}
-                      asignaturas={result?.asignaturas?.split(',')}
-                      onClick={() => handlerPerfil(result.id_tutor)}
-                    />
+                  <TutorCard
+                    key={index}
+                    nombre={result.nombre}
+                    descripcion={result.descripcion}
+                    universidad={result.universidad}
+                    precioPorHora={result.precioporhora}
+                    valoracion={result.valoracion_promedio}
+                    asignaturas={result?.asignaturas?.split(',')}
+                    onClick={() => handlerPerfil(result.id_tutor)}
+                  />
                 </Box>
               )) : (
                 <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', pt: '50px' }}>
