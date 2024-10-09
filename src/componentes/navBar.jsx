@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SolicitudSerTutor from './solicitudSerTutor';
 import SolicitudSerTutorv2 from './solicitudSerTutorv2';
+import { ROL } from '../constants/rol';
 
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
@@ -59,7 +60,10 @@ function Navbar() {
         e.preventDefault();
         navigate('/tutorias');
     }
-
+    const verAdminPanel = (e)=>{
+        e.preventDefault();
+        navigate('/admin/users');
+    }
     const solicitarSerTutor = (e)=>{
         e.preventDefault();
         handleOpenTutor();
@@ -98,9 +102,6 @@ function Navbar() {
                             <Button color="inherit" onClick={registro}>Regístrate</Button>
                         </> :
                         <>
-                         
-                            
-
                             <IconButton 
                                 id="basic-button" aria-controls={open ? 'basic-menu' : undefined} 
                                 aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={handleClick}
@@ -118,6 +119,11 @@ function Navbar() {
                                 <MenuItem onClick={handleClose}>Configuracion</MenuItem>
                                 
                                 <MenuItem onClick={handleClose}>Mensajes</MenuItem>
+                                {
+                                    usuario.rol == ROL.ADMINISTRADOR && 
+                                    <MenuItem onClick={verAdminPanel}>Administrador</MenuItem>
+
+                                }
                                 <MenuItem onClick={cerrarSesion} style={{color: 'red'}}>Cerrar Sesión</MenuItem>
                             </Menu>
 

@@ -1,8 +1,9 @@
-import { Card, CardContent, CardMedia, Box, Typography, Button, Rating } from '@mui/material';
-import { minHeight, styled } from '@mui/system';
+import { Card, CardContent, CardMedia, Box, Typography, Button, Rating, Avatar } from '@mui/material';
+import { styled } from '@mui/system';
 import SchoolIcon from '@mui/icons-material/School';
 import perfil from '../assets/perfil.jpg';
 import useIsMobile from '../utils/useIsMobile';
+import { deepOrange } from '@mui/material/colors';
 
 const StyledCard = styled(Card)({
   marginBottom: '20px',
@@ -30,26 +31,22 @@ const StyledButton = styled(Button)({
 const TutorCard = ({ nombre, descripcion, universidad, precioPorHora, valoracion, asignaturas, onClick }) => {
   const isMobile = useIsMobile();
   return (
-    <StyledCard onClick={onClick}>
+    <StyledCard onClick={onClick} sx={{display:'flex'}}>
       {
         !isMobile &&
-        <StyledCardMedia
-          component="img"
-          alt="Tutor"
-          image={perfil}
-          title="Tutor"
-          sx={{ minWidth: '50px', minHeight: '50px' }}
-        />
+        <Avatar sx={{ bgcolor: deepOrange[500], width: 150, height: 150 }}>
+          {nombre[0]}
+        </Avatar>
       }
-      <StyledCardContent>
+      <StyledCardContent sx={{width:'100%'}}>
         <Typography variant="h5" component="div">
           {nombre}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {descripcion}
         </Typography>
-        <Box mt={2} display="flex" justifyContent="space-between">
-          <Box>
+        <Box mt={2} sx={{ display: 'flex', justifyContent: 'space-between'}}>
+          <Box sx={{ flex: '1 1 auto' }}> {/* Asegura que el primer Box ocupe el espacio disponible */}
             <Typography variant="body2" display={'flex'} alignItems={'center'} gap={'10px'} sx={{ marginBottom: '10px' }}>
               <SchoolIcon /> {universidad}
             </Typography>
@@ -59,11 +56,10 @@ const TutorCard = ({ nombre, descripcion, universidad, precioPorHora, valoracion
               ))}
             </Box>
           </Box>
-          <Box textAlign="right">
+          <Box sx={{ textAlign: 'right', flex: '0 0 auto' }}> {/* Asegura que el segundo Box no se expanda */}
             <Rating value={valoracion} readOnly precision={0.5} />
             <Typography variant="body2">Recomendado</Typography>
-            {precioPorHora ? <Typography variant="h6">Desde {precioPorHora}$/hora</Typography> : <Typography variant="h6"> Sin tutorias </Typography>}
-            <StyledButton variant="contained" color="primary">Solicitar tutoría</StyledButton>
+            <StyledButton variant="contained" color="primary">Ver Perfil</StyledButton>
           </Box>
         </Box>
       </StyledCardContent>

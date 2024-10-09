@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, MenuItem, Autocomplete, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { getEstudiantesSolicitudesDeTutor } from '../services/tutoresServices';
+import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
+import { CLAVES } from '../constants/claves';
+import { useSnackContext } from '../context/SnackContext';
 
 const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
     const [formData, setFormData] = useState({
@@ -20,27 +23,46 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
     const [idEstudiante, setIdEstudiante] = useState(null); // Añade un nuevo estado para almacenar el id del estudiante seleccionado
     const loading = open && options.length === 0;
     const [asignaturas, setAsignaturas] = useState([]); // Añade un nuevo estado para almacenar las asignaturas 
+    const clavesArray = Object.keys(CLAVES);
+    const {openSnack} = useSnackContext();
     const handleChangeIdEstudiante = (e,value) => {
         console.log("value:",value);
         setIdEstudiante(value); // Almacena el id del estudiante seleccionado
     };
     const handleChange = (event) => {
+        console.log(event.target);
         const { name, value } = event.target;
+        console.log(name, value);
         setFormData(prevState => ({
             ...prevState,
             [name]: value,
         }));
     };
     const getAsignaturas = async () => {
+        const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
+        getAsignaturasImpartidasPorTutorService(id_tutor).then((res) => {
+            console.log(res.data);
+            setAsignaturas(res.data);
+        }).catch((error) => {
+            console.error('Hubo un problema al realizar la solicitud:', error);
+        });/*
         const res = await axios.get(`${import.meta.env.VITE_BACK_URL}asignaturas`);
         console.log(res.data);
-        setAsignaturas(res.data);
+        setAsignaturas(res.data);*/
     };
     useEffect(() => {
         getAsignaturas();
     }, []);
     const handleSubmit = async () => {
+        /*if(formData.clave === ''){
+            alert('Debes seleccionar una clave');
+            return;
+        }*/
         // Verifica que la hora final sea mayor que la hora de inicio
+        if(formData.fecha === ''){
+            alert('Debes seleccionar una fecha');
+            return;
+        }
         if (formData.horaInicio >= formData.horaFin) {
             alert('La hora final debe ser mayor que la hora de inicio');
             return;
@@ -66,10 +88,21 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
             id_tutor,
             id_estudiante
         };
-        const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/subir`, dataToSend);
-        console.log(res.data);
-        setOpenModal(false);
-        await loadTutorias();
+        try{
+            const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/subir`, dataToSend);
+            console.log(res.data);
+            setOpenModal(false);
+            openSnack('Tutoría creada exitosamente', 'success');
+            await loadTutorias();
+        }catch (e) {
+            console.log("status:",e.response.status)
+            if (e.response && e.response.status == 409) {
+                openSnack('Ya existe una tutoría en las horas seleccionadas', 'error');
+            } else {
+                openSnack('Hubo un error al crear la tutoría', 'error');
+            }
+            console.log("error:", e);
+        }
     };
     function sleep(duration) {
         return new Promise((resolve) => {
@@ -110,6 +143,13 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
             console.error('Hubo un problema al realizar la solicitud:', error);
         });
     }
+    
+    const handleClaveChange = (event, value) => {
+        setFormData(prevState => ({
+            ...prevState,
+            clave: value,
+        }));
+    };
     useEffect(() => {
         loadUsuarios();
     }, []);
@@ -135,7 +175,7 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
                     margin="dense"
                 >
                     {asignaturas.map((asignatura) => (
-                        <MenuItem key={asignatura.codigo} value={asignatura.codigo}>{asignatura.nombreasignatura}</MenuItem>
+                        <MenuItem key={asignatura.codigo_asignatura} value={asignatura.codigo_asignatura}>{asignatura.nombre_asignatura}</MenuItem>
                     ))}
                 </TextField>
                 <TextField
@@ -183,6 +223,17 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
                     type="date"
                     InputLabelProps={{ shrink: true }}
                 />
+                {/*array: clavesArray */}
+               {/* <Autocomplete
+                    id="combo-box-demo"
+                    onChange={handleClaveChange}
+                    value={formData.clave}
+                    options={clavesArray}
+                    getOptionLabel={(option) => option}
+                    style={{ width: 300 }}
+                    renderInput={(params) => <TextField {...params} label="Clave" />}
+                />*/}
+                    
                 <TextField
                     label="Hora inicial"
                     name="horaInicio"

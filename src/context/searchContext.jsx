@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { getUsersService } from "../services/usersServices";
 
 const SearchContext = createContext();
 
@@ -82,10 +83,10 @@ export const SearchContextProvider = ({ children }) => {
     }
     console.log("Keyword:", keyword);
     try {
-        const urlBase = import.meta.env.VITE_BACK_URL;
-      const response = await axios.post(`${urlBase}usuario/lista/usuarios?keyword=${keyword}&page=${page}&limit=9&orderBy=${order}&direction=${direction}`, {
+      /*const response = await axios.post(`${urlBase}usuario/lista/usuarios?keyword=${keyword}&page=${page}&limit=9&orderBy=${order}&direction=${direction}`, {
         filters: filters
-      });
+      });*/
+      const response = await getUsersService(keyword, page, order, direction, filters);
       const res = response.data;
       console.log("Search results:", res);
       setSearchResults(res.data);

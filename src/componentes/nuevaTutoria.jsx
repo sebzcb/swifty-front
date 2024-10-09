@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSnackContext } from '../context/SnackContext';
+import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
 
 const style = {
   position: 'absolute',
@@ -30,9 +31,15 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
   const [descripcion, setDescripcion] = useState('');
   const { openSnack } = useSnackContext();
   const getAsignaturas = async () => {
+    getAsignaturasImpartidasPorTutorService(id_tutor).then((res) => {
+      console.log(res.data);
+      setAsignaturas(res.data);
+    }).catch((error) => {
+      console.error('Error al cargar las asignaturas:', error);
+    });/*
     const res = await axios.get(`${import.meta.env.VITE_BACK_URL}asignaturas`);
     console.log(res.data);
-    setAsignaturas(res.data);
+    setAsignaturas(res.data);*/
   };
   useEffect(() => {
     getAsignaturas();
@@ -97,7 +104,7 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
 
         >
           {asignaturas.map((asignatura) => (
-            <MenuItem key={asignatura.codigo} value={asignatura.codigo}>{asignatura.nombreasignatura}</MenuItem>
+            <MenuItem key={asignatura.codigo} value={asignatura.codigo_asignatura}>{asignatura.nombre_asignatura}</MenuItem>
           ))}
         </TextField>
 

@@ -12,6 +12,10 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
     const handleGuardar = async () => {
         // Aquí puedes manejar la lógica para guardar los cambios
         console.log('Guardar cambios', descripcion, modalidad, fecha, horaInicio, horaFin, maxEstudiantes);
+        if( horaInicio >= horaFin){
+            alert('La hora final debe ser mayor que la hora de inicio');
+            return;
+        }
         setOpenModalEditar(false);
         await handleEditarTutoria(descripcion, modalidad, fecha, horaInicio, horaFin, maxEstudiantes);
     };

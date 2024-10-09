@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import HorarioVer from './horarioVer';
 import EditarHorario from './editarHorario';
 import Rating from '@mui/material/Rating';
+import { CLAVES } from '../constants/claves';
 
 const Horario = () => {
   const [usuario, setUsuario] = useState(null);
@@ -40,8 +41,8 @@ const Horario = () => {
   };
 
   const days = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
-  const times = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-12', '13-14'];
-
+  const clavesArray = Object.keys(CLAVES);
+  const times = clavesArray;
   const [data, setData] = useState(null);
 
   const handleCircleClick = (rowIndex, colIndex) => {

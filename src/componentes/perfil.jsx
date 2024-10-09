@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Typography, Button, Stack, Card, CardContent, Avatar, List, ListItem, ListItemIcon, ListItemText, Paper, IconButton, Box } from '@mui/material';
+import { Typography, Button, Stack, Card, CardContent, Avatar, List, ListItem, ListItemIcon, ListItemText, Paper, IconButton, Box, Chip } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
 import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
@@ -17,6 +17,7 @@ import Report from './reporte';
 import Calificar from './calificar';
 import EditarPerfilModal from './editarPerfilModal';
 import { getEstudiantesSolicitudesDeTutor } from '../services/tutoresServices';
+import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
 
 const Perfil = () => {
     const [openModalEditar, setOpenModalEditar] = useState(false);
@@ -28,7 +29,8 @@ const Perfil = () => {
     const [openModalReport, setOpenModalReport] = useState(false);
     const [openModalCalificar, setOpenModalCalificar] = useState(false);
     const [promedioCalificaciones, setPromedioCalificaciones] = useState(null); // Estado para almacenar el promedio
-    const [estudiantes,setEstudiantes] = useState([]);
+    const [estudiantes, setEstudiantes] = useState([]);
+    const [asignaturasImpartidas, setAsignaturasImpartidas] = useState(null);
     const handleOpenTutor = () => setOpenModalTutor(true);
     const handleOpenReport = () => setOpenModalReport(true);
     const handleOpenCalificar = () => setOpenModalCalificar(true);
@@ -47,7 +49,7 @@ const Perfil = () => {
                 throw new Error('Hubo un problema al realizar la solicitud.');
             }
             const data = response.data;
-            console.log(data);
+            console.log("usauario id",data);
             setUsuario(data);
             const user = JSON.parse(localStorage.getItem('usuario'));
             const idUserStorage = user.id;
@@ -71,7 +73,7 @@ const Perfil = () => {
     };
     const loadUsuarios = async () => {
         getEstudiantesSolicitudesDeTutor(idUsuario).then((res) => {
-            console.log("res:",res);
+            console.log("res:", res);
             setEstudiantes([...res]);
         }).catch((error) => {
             console.error('Hubo un problema al realizar la solicitud:', error);
@@ -82,20 +84,31 @@ const Perfil = () => {
         setEstudiantes([...res.data]);*/
     }
     useEffect(() => {
+        if(!usuario) return;
+        const id_tutor = usuario.id_tutor;
+        if(!id_tutor) return;
+        getAsignaturasImpartidasPorTutorService(id_tutor).then((res) => {
+            setAsignaturasImpartidas(res.data);
+        }).catch((error) => {
+            console.error('Hubo un problema al realizar la solicitud:', error);
+        });
+
+    }, [usuario]);
+    useEffect(() => {
         obtenerUsuario();
     }, [idUsuario]);
     useEffect(() => {
-        if(!usuarioExterno) return;
+        if (!usuarioExterno) return;
         console.log("===== load usuarios =====");
         loadUsuarios();
-    },[usuarioExterno]);
+    }, [usuarioExterno]);
     useEffect(() => {
-        if(!usuario) return;
+        if (!usuario) return;
         const id_user_actual = JSON.parse(localStorage.getItem('usuario')).id;
-        console.log("estudiantes:",estudiantes)
+        console.log("estudiantes:", estudiantes)
         const id_estudiante = estudiantes.find(estudiante => estudiante.id === id_user_actual);
-        if(id_estudiante) setTuvoClaseConTutor(true);
-    },[usuario,estudiantes]);
+        if (id_estudiante) setTuvoClaseConTutor(true);
+    }, [usuario, estudiantes]);
 
     const calcularPromedioCalificaciones = async (idTutor) => {
         try {
@@ -183,27 +196,38 @@ const Perfil = () => {
                                 <FlashOnIcon sx={{ marginRight: '10px' }} />Solicitar Tutoría
                             </Button>
                             {
-                                tuvoClaseConTutor && 
-                            <Button
-                                color="primary"
-                                onClick={handleOpenCalificar}
-                                sx={{
-                                    backgroundColor: 'primary.main',
-                                    color: 'white',
-                                    '&:hover': {
-                                        backgroundColor: 'primary.dark'
-                                    },
-                                    padding: '10px 20px',
-                                    borderRadius: '8px',
-                                    textTransform: 'none'
-                                }}
-                            >
-                                <ThumbsUpDownIcon sx={{ marginRight: '10px' }} />Calificar
-                            </Button>
+                                tuvoClaseConTutor &&
+                                <Button
+                                    color="primary"
+                                    onClick={handleOpenCalificar}
+                                    sx={{
+                                        backgroundColor: 'primary.main',
+                                        color: 'white',
+                                        '&:hover': {
+                                            backgroundColor: 'primary.dark'
+                                        },
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        textTransform: 'none'
+                                    }}
+                                >
+                                    <ThumbsUpDownIcon sx={{ marginRight: '10px' }} />Calificar
+                                </Button>
                             }
                         </Stack>
                     ) : null}
                     <List sx={{ marginTop: 2 }}>
+                        {
+                            asignaturasImpartidas &&
+                            <>
+                                {asignaturasImpartidas.map((asignatura) => (
+                                    <Chip key={asignatura.codigo_asignatura} label={asignatura.nombre_asignatura + " - $" +
+                                        asignatura.precio + " CLP/hora"
+                                    } sx={{ margin: '5px' }} />
+                                ))}
+                            </>
+
+                        }
                         <ListItem>
                             <ListItemIcon sx={{ color: 'primary.main' }}>
                                 <SchoolIcon />
@@ -240,7 +264,7 @@ const Perfil = () => {
             <NuevaTutoria open={openModalTutor} handleClose={handleCloseTutor} id_tutor={usuario?.id_tutor} />
             <Report open={openModalReport} handleClose={handleCloseReport} idUsuario={usuario?.id} />
             {usuarioExterno && <Calificar open={openModalCalificar} handleClose={handleCloseCalificar} idUsuario={usuario?.id} />}
-            {usuario && <EditarPerfilModal open={openModalEditar} setOpen={setOpenModalEditar} id_usuario={usuario?.id} renderFunction={obtenerUsuario} />}
+            {usuario && openModalEditar && <EditarPerfilModal open={openModalEditar} setOpen={setOpenModalEditar} id_usuario={usuario?.id} renderFunction={obtenerUsuario} />}
         </>
     );
 };

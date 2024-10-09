@@ -1,0 +1,40 @@
+.admin-items-div {
+    border-radius: 9px;
+    width: 100%;
+    height: 24px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    padding: 20px 30px;
+    transition: 200ms;
+    color: var(--text_secondary);
+}
+
+.admin-items-div:hover {
+    transition: 200ms;
+    background-color: #eaf7ff;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.selected {
+    background-color: #eaf7ff;
+    color: var(--primary);
+}
+
+.admin-items {
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 15px;
+    letter-spacing: -0.19px;
+    color: inherit;
+    margin: 0;
+    color: var(--text_secondary);
+}

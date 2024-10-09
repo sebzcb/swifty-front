@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react';
-import { Container, Grid, Box, Typography, MenuItem, Select, Pagination, FormControl, InputLabel } from '@mui/material';
+import {  useEffect, useState } from 'react';
+import { Container, Box, Typography, MenuItem, Select, Pagination, FormControl, InputLabel } from '@mui/material';
 import Filtros from '../componentes/filtros';
 import TutorCard from '../componentes/tutorCard';
 import Navbar from '../componentes/navBar';
@@ -119,7 +119,7 @@ const BusquedaVista = () => {
                     universidad={result.universidad}
                     precioPorHora={result.precioporhora}
                     valoracion={result.valoracion_promedio}
-                    asignaturas={result?.asignaturas?.split(',')}
+                    asignaturas={result?.asignaturas_impartidas?.split(',')}
                     onClick={() => handlerPerfil(result.id_tutor)}
                   />
                 </Box>

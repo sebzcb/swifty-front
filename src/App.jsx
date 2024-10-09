@@ -10,8 +10,11 @@ import { TutorRoute } from './componentes/tutorRoute';
 import Registro from './vistas/registro';
 import { SearchContextProvider } from './context/searchContext';
 import AppThemeProvider from './themes/AppThemeProvider';
-import { SnackContextProvider, useSnackContext } from './context/SnackContext';
+import { useSnackContext } from './context/SnackContext';
 import Snacks from './utils/Snacks';
+import AdminIndex from './vistas/admin';
+import UsersAdmin from './vistas/admin/UsersAdmin';
+import ReportsAdmin from './vistas/admin/ReportsAdmin';
 function App() {
   const { snackInfo, closeSnack } = useSnackContext();
   return (
@@ -19,23 +22,28 @@ function App() {
       <Router>
         <AppThemeProvider>
           <SearchContextProvider>
-              <Snacks
-                message={snackInfo.message}
-                severity={snackInfo.severity}
-                open={snackInfo.isOpen}
-                closeSnack={closeSnack}
-              />
-              <Routes>
-                <Route path="/" >
-                  <Route index element={<Home />}></Route>
-                  <Route path=':idUsuario' element={<PrivateRoute><EditarPerfil /></PrivateRoute>}></Route>
-                  <Route path='search' element={<BusquedaVista />}></Route>
-                  <Route path='tutorias' element={<TutorRoute><GestionTutorias /></TutorRoute>}></Route>
-                  <Route path='login' element={<Login />}></Route>
-                  <Route path='registro' element={<Registro />}></Route>
+            <Snacks
+              message={snackInfo.message}
+              severity={snackInfo.severity}
+              open={snackInfo.isOpen}
+              closeSnack={closeSnack}
+            />
+            <Routes>
+              <Route path="/" >
+                <Route index element={<Home />}></Route>
+                <Route path=':idUsuario' element={<PrivateRoute><EditarPerfil /></PrivateRoute>}></Route>
+                <Route path='search' element={<BusquedaVista />}></Route>
+                <Route path='tutorias' element={<TutorRoute><GestionTutorias /></TutorRoute>}></Route>
+                <Route path='login' element={<Login />}></Route>
+                <Route path='registro' element={<Registro />}></Route>
+                <Route path='admin' element={<AdminIndex />}>
+                  <Route index element={<UsersAdmin />} /> {/* Ruta por defecto */}
+                  <Route path='users' element={<UsersAdmin />} />
+                  <Route path='reports' element={<ReportsAdmin />} />
                 </Route>
-                <Route path='*' element={<h1>404 Not Found</h1>}></Route>
-              </Routes>
+              </Route>
+              <Route path='*' element={<h1>404 Not Found</h1>}></Route>
+            </Routes>
           </SearchContextProvider>
         </AppThemeProvider>
       </Router>
