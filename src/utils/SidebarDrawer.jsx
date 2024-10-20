@@ -7,6 +7,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 const drawerWidth = 240;
 import './admin.css';
+import Navbar from "../componentes/navBar";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
@@ -27,6 +28,20 @@ const configItems = [
     },
     {
         id: 2,
+        name: "Tutores",
+        link: "/admin/tutors",
+        icon: <Code />,
+        iconSelected: <Code color="#2495fd" />,
+    },
+    {
+        id:3,
+        name: "Administradores",
+        link: "/admin/admins",
+        icon: <People />,
+        iconSelected: <People color="#2495fd" />,
+    },
+    {
+        id: 4,
         name: "Reportes",
         link: "/admin/reports",
         icon: <Report />,
@@ -54,6 +69,7 @@ const SidebarDrawer = ({ children }) => {
 
     return (
         <>
+        <Navbar />
         <Box sx={{ display: "flex", width: "100%" }}>
             <Drawer
                 sx={{

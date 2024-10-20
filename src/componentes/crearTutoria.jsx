@@ -5,6 +5,8 @@ import { getEstudiantesSolicitudesDeTutor } from '../services/tutoresServices';
 import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
 import { CLAVES } from '../constants/claves';
 import { useSnackContext } from '../context/SnackContext';
+import { sendEmail } from '../utils/sendEmail';
+import { getUserService } from '../services/usersServices';
 
 const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
     const [formData, setFormData] = useState({
@@ -53,6 +55,48 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
     useEffect(() => {
         getAsignaturas();
     }, []);
+    const subirTutoria = async (dataToSend) => {
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/subir`, dataToSend);
+            console.log(res.data);
+            return res.data;
+        } catch (e) {
+            console.log("status:", e.response.status);
+            if (e.response && e.response.status === 409) {
+                openSnack('Ya existe una tutoría en las horas seleccionadas', 'error');
+            } else {
+                openSnack('Hubo un error al crear la tutoría', 'error');
+            }
+            console.log("error:", e);
+            throw e;
+        }
+    };
+    const enviarCorreoNotificacion = async (id_estudiante, formData) => {
+        try {
+            const res = await getUserService(id_estudiante);
+            console.log("res:", res);
+            const { correo, nombre } = res.data;
+            console.log("correo:", correo);
+            // estudiantes datos
+            const correoEstudianteAyudado = correo;
+            const nombreEstudiante = nombre;
+            // tutorias datos
+            const fechaTutorial = formData.fecha;
+            const horaInicioTutorial = formData.horaInicio;
+            const horaFinTutorial = formData.horaFin;
+            const precioPorHora = formData.precioHora;
+            const descripcion = formData.descripcion;
+            const modalidad = formData.modalidad;
+            const codigo_asignatura = formData.codigo_asignatura;
+            const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+            const msj = `Hola ${nombreEstudiante},\n\nSe ha creado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
+            await sendEmail(correoEstudianteAyudado, 'Tutoría programada', msj);
+            openSnack('Correo de notificación enviado exitosamente', 'success');
+        } catch (error) {
+            console.error('Hubo un problema al enviar el correo de notificación:', error);
+            openSnack('Hubo un problema al enviar el correo de notificación', 'error');
+        }
+    };
     const handleSubmit = async () => {
         /*if(formData.clave === ''){
             alert('Debes seleccionar una clave');
@@ -88,6 +132,19 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
             id_tutor,
             id_estudiante
         };
+        //fecha formato data to send: 2024-10-10
+        console.log("data send:",JSON.stringify(dataToSend));
+
+        try {
+            await subirTutoria(dataToSend);
+            setOpenModal(false);
+            openSnack('Tutoría creada exitosamente', 'success');
+            await loadTutorias();
+            await enviarCorreoNotificacion(id_estudiante, formData);
+        } catch (e) {
+            console.log("Error en el proceso:", e);
+        }
+/*
         try{
             const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/subir`, dataToSend);
             console.log(res.data);
@@ -103,6 +160,27 @@ const ModalTutoria = ({ setOpenModal,loadTutorias }) => {
             }
             console.log("error:", e);
         }
+        getUserService(id_estudiante).then((res) => {
+            console.log("res:", res);
+            const { correo,nombre } = res.data;
+            console.log("correo:", correo);
+            //estudiantes datos
+            const correoEstudianteAyudado = correo;
+            const nombreEstudiante = nombre;
+            //tutorias datos
+            const fechaTutorial = formData.fecha;
+            const horaInicioTutorial = formData.horaInicio;
+            const horaFinTutorial = formData.horaFin;
+            const precioPorHora = formData.precioHora;
+            const descripcion = formData.descripcion;
+            const modalidad = formData.modalidad;
+            const codigo_asignatura = formData.codigo_asignatura;
+            const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+            const msj = `Hola ${nombreEstudiante},\n\nSe ha creado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
+            sendEmail(correoEstudianteAyudado, 'Tutoría programada', msj);
+        }).catch((error) => {
+            console.error('Hubo un problema al realizar la solicitud:', error);
+        });*/
     };
     function sleep(duration) {
         return new Promise((resolve) => {

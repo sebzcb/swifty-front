@@ -87,12 +87,16 @@ function Navbar() {
                             </Typography>
                         </Button>
                         {
-                            usuario != null ?
-                            usuario.rol == 'estudiante' ?
-                                <Button color="inherit" onClick={solicitarSerTutor}><SchoolIcon style={{marginRight:'20px'}}/> Solicitar ser tutor </Button>:
-                                <Button color="inherit" onClick={gestionarTutorias}><ManageSearchIcon style={{marginRight:'20px'}}/> Gestionar tutorias </Button>
-                            :
-                            null
+                            usuario != null && usuario.rol === ROL.ESTUDIANTE &&
+                            <Button color="inherit" onClick={solicitarSerTutor}>
+                                <SchoolIcon style={{ marginRight: '20px' }} /> Solicitar ser tutor
+                            </Button>
+                        }
+                        {
+                            usuario != null && usuario.rol === ROL.TUTOR &&
+                            <Button color="inherit" onClick={gestionarTutorias}>
+                                <ManageSearchIcon style={{ marginRight: '20px' }} /> Gestionar tutorias
+                            </Button>
                         }
                     </Container>
                     {
@@ -116,10 +120,10 @@ function Navbar() {
                                 }}
                             >
                                 <MenuItem onClick={verPerfil}>Mi perfil</MenuItem>
-                                <MenuItem onClick={handleClose}>Configuracion</MenuItem>
-                                
-                                <MenuItem onClick={handleClose}>Mensajes</MenuItem>
-                                {
+{/*                                <MenuItem onClick={handleClose}>Configuracion</MenuItem>
+*/}                                
+{/*                                <MenuItem onClick={handleClose}>Mensajes</MenuItem>
+*/}                                {
                                     usuario.rol == ROL.ADMINISTRADOR && 
                                     <MenuItem onClick={verAdminPanel}>Administrador</MenuItem>
 

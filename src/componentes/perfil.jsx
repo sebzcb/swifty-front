@@ -18,6 +18,7 @@ import Calificar from './calificar';
 import EditarPerfilModal from './editarPerfilModal';
 import { getEstudiantesSolicitudesDeTutor } from '../services/tutoresServices';
 import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
+import { getUserService } from '../services/usersServices';
 
 const Perfil = () => {
     const [openModalEditar, setOpenModalEditar] = useState(false);
@@ -44,7 +45,7 @@ const Perfil = () => {
     }
     const obtenerUsuario = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_BACK_URL}usuario/${idUsuario}`);
+            const response = await getUserService(idUsuario);
             if (response.status !== 200) {
                 throw new Error('Hubo un problema al realizar la solicitud.');
             }
@@ -166,8 +167,8 @@ const Perfil = () => {
                             </Paper>
                             <Stack direction="column" spacing={0}>
                                 <Typography variant="body2">{obtenerMensajeCalificacion(parseFloat(promedioCalificaciones))}</Typography>
-                                <Typography variant="body2" color="textSecondary">+2 reviews</Typography>
-                            </Stack>
+{/*                                <Typography variant="body2" color="textSecondary">+2 reviews</Typography>
+*/}                            </Stack>
                         </Stack>
                     ) : null}
                     <Typography variant="body2" sx={{ wordBreak: 'break-word', marginTop: 2 }}>
@@ -232,7 +233,7 @@ const Perfil = () => {
                             <ListItemIcon sx={{ color: 'primary.main' }}>
                                 <SchoolIcon />
                             </ListItemIcon>
-                            <ListItemText primary="PUCV" />
+                            <ListItemText primary={usuario?.universidad_nombre} />
                         </ListItem>
                         <ListItem>
                             <ListItemIcon sx={{ color: 'primary.main' }}>
@@ -256,13 +257,19 @@ const Perfil = () => {
                             <ListItemIcon sx={{ color: 'primary.main' }}>
                                 <EventIcon />
                             </ListItemIcon>
-                            <ListItemText primary={usuario?.fechanacimiento} />
+                            <ListItemText primary={usuario?.fechanacimiento == '' ? 'No especificada' : usuario?.fechanacimiento} />
                         </ListItem>
                     </List>
                 </CardContent>
             </Card>
-            <NuevaTutoria open={openModalTutor} handleClose={handleCloseTutor} id_tutor={usuario?.id_tutor} />
-            <Report open={openModalReport} handleClose={handleCloseReport} idUsuario={usuario?.id} />
+            {
+                usuario &&
+                <NuevaTutoria open={openModalTutor} handleClose={handleCloseTutor} id_tutor={usuario.id_tutor} />
+            }
+            {
+                usuario &&
+            <Report open={openModalReport} handleClose={handleCloseReport} idUsuario={usuario.id} />
+            }
             {usuarioExterno && <Calificar open={openModalCalificar} handleClose={handleCloseCalificar} idUsuario={usuario?.id} />}
             {usuario && openModalEditar && <EditarPerfilModal open={openModalEditar} setOpen={setOpenModalEditar} id_usuario={usuario?.id} renderFunction={obtenerUsuario} />}
         </>

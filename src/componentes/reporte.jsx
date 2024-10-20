@@ -116,7 +116,7 @@ const Report = ({ open, handleClose, idUsuario }) => {
               onChange={(e) => setDetalles(e.target.value)}
               inputProps={{ maxLength: 500 }}
             />
-            <Button
+{/*            <Button
               variant="contained"
               component="label"
               fullWidth
@@ -130,7 +130,7 @@ const Report = ({ open, handleClose, idUsuario }) => {
                 multiple
                 onChange={handleChangeImagenes}
               />
-            </Button>
+            </Button>*/}
             <Stack spacing={1} sx={{ marginTop: 2 }}>
               {imagenes.length > 0 && (
                 <Typography variant="body2">Imágenes seleccionadas:</Typography>

@@ -8,6 +8,9 @@ import ModalTutoria from './crearTutoria';
 import axios from 'axios';
 import ConfirmarEliminarTutoriaModal from './confirmarEliminarTutoriaModal';
 import EditarTutoriaModal from './editarTutoriaModal';
+import { useSnackContext } from '../context/SnackContext';
+import { sendEmail } from '../utils/sendEmail';
+import { getUserService } from '../services/usersServices';
 
 function VerTutorias() {
   const [openModal, setOpenModal] = useState(false);
@@ -16,7 +19,7 @@ function VerTutorias() {
   const [idTutoriaSeleccionada, setIdTutoriaSeleccionada] = useState(null);
   const [tutoriaSeleccionadaEditar, setTutoriaSeleccionadaEditar] = useState(null);
   const [openModalEditar, setOpenModalEditar] = useState(false);
-
+  const {openSnack} = useSnackContext();
   const handleCrearTutoria = () => {
     console.log('Crear tutoria');
     setOpenModal(true);
@@ -37,7 +40,7 @@ function VerTutorias() {
     try {
       const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
       const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/lista/tutorias`, { id_tutor });
-      console.log(res.data);
+      console.log("load tutorias:",res.data);
       setTutorias(res.data);
     } catch (error) {
       console.error('Error al cargar tutorias:', error);
@@ -47,11 +50,45 @@ function VerTutorias() {
     loadTutorias();
   }, []);
   const handleEliminarTutoria = async () => {
-    console.log('Eliminar tutoria de id', idTutoriaSeleccionada);
-    const res = await axios.delete(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/eliminar/${idTutoriaSeleccionada}`);
-    console.log(res.data);
-    setOpenModalEliminar(false);
-    await loadTutorias();
+    try{
+      console.log('Eliminar tutoria de id', idTutoriaSeleccionada);
+      const res = await axios.delete(`${import.meta.env.VITE_BACK_URL}usuario/tutorias/eliminar/${idTutoriaSeleccionada}`);
+      console.log(res.data);
+      setOpenModalEliminar(false);
+      const tutoriaEliminada = tutorias.find(tutoria => tutoria.id === idTutoriaSeleccionada);
+      if (!tutoriaEliminada) {
+        console.error('No se encontró la tutoria con id', idTutoriaSeleccionada);
+        openSnack('Error al eliminar tutoria', 'error');
+        return;
+      }
+      console.log('Tutoria eliminada:', tutoriaEliminada);
+      const id_estudiante = tutoriaEliminada.id_estudiante;
+      const estudianteAfectadoData = await getUserService(id_estudiante);
+      const estudianteAfectado = estudianteAfectadoData.data;
+      console.log("res:", res);
+      const { correo, nombre } = estudianteAfectado;
+      console.log("correo:", correo);
+      // estudiantes datos
+      const correoEstudianteAyudado = correo;
+      const nombreEstudiante = nombre;
+      // tutorias datos
+      const fechaTutorial = tutoriaEliminada.fecha;
+      const horaInicioTutorial = tutoriaEliminada.hora;
+      const horaFinTutorial = tutoriaEliminada.horafinal;
+      const precioPorHora = tutoriaEliminada.precioporhora;
+      const descripcion = tutoriaEliminada.descripcion;
+      const modalidad = tutoriaEliminada.modalidad;
+      const codigo_asignatura = tutoriaEliminada.codigoasignatura;
+      const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+      const msjEmailEnviarEstudiante = `Hola ${nombreEstudiante},\n\nSe ha eliminado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
+      await sendEmail(correoEstudianteAyudado, 'Tutoría eliminada', msjEmailEnviarEstudiante);
+      await loadTutorias();
+      openSnack('Tutoria eliminada con éxito', 'success');
+    }catch(error){
+      console.error('Error al eliminar tutoria:', error);
+      openSnack('Error al eliminar tutoria', 'error');
+    }
+    //enviar email
   }
   const handleConfirmarEliminar = (id_tutoria) => {
     console.log('Confirmar eliminar tutoria con id', id_tutoria);
@@ -77,9 +114,45 @@ function VerTutorias() {
         maxEstudiantes
       });
       console.log('Tutoria editada con éxito', response.data);
+      openSnack('Tutoria editada con éxito', 'success');
+      console.log("tutoria editada:",JSON.stringify(tutoriaSeleccionadaEditar));
+      const tutoriaData = tutoriaSeleccionadaEditar;
+      /*
+      tutoria editada: {
+      "id":73,"hora":"14:35","fecha":"2024-10-15","codigoasignatura":"CS101","descripcion":"das",
+      "precioporhora":213,"modalidad":"presencial","id_estudiante":"b25eedfa","id_tutor":"20bd9126",
+      "cantidadmaximaestudiantes":2,"horafinal":"15:35","nombreasignatura":"Calculo",
+      "nombre_estudiante":"cba"}
+      */
+      const id_estudiante = tutoriaData.id_estudiante;
+      const estudianteData = await getUserService(id_estudiante);
+      const estudiante = estudianteData.data;
+      console.log("estudiante:", estudiante);
+      const { correo, nombre } = estudiante;
+      console.log("correo:", correo);
+      // estudiantes datos
+      const correoEstudianteAyudado = correo;
+      const nombreEstudiante = nombre;
+      // tutorias datos
+      const fechaTutorial = tutoriaData.fecha;
+      const horaInicioTutorial = tutoriaData.hora;
+      const horaFinTutorial = tutoriaData.horafinal;
+      const precioPorHora = tutoriaData.precioporhora;
+      const descripcion2 = tutoriaData.descripcion;
+      const modalidad2 = tutoriaData.modalidad;
+      const codigo_asignatura = tutoriaData.codigoasignatura;
+      const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+      const msjEmailEnviarEstudiante = `Hola ${nombreEstudiante},\n\nSe ha editado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad2}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion2}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
+      await sendEmail(correoEstudianteAyudado, 'Tutoría editada', msjEmailEnviarEstudiante);
+      setOpenModalEditar(false);
       await loadTutorias();
     } catch (error) {
       console.error('Error al editar tutoria:', error);
+      if(error?.response?.status === 409){
+        openSnack('Error al editar tutoria: Ya esta ocupado la fecha y clave', 'error');
+      }else{
+        openSnack('Error al editar tutoria', 'error');
+      }
     }
   }
 
@@ -120,6 +193,7 @@ function VerTutorias() {
               <TableCell>Precio por hora</TableCell>
               <TableCell>Estado</TableCell>
               <TableCell>Alumnos</TableCell>
+              <TableCell>Estudiante</TableCell>
               <TableCell>Descripción</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
@@ -135,6 +209,7 @@ function VerTutorias() {
                 <TableCell>{tutoria.precioporhora}</TableCell>
                 <TableCell>{calcularEstado(tutoria)}</TableCell>
                 <TableCell>{tutoria.cantidadmaximaestudiantes}</TableCell>
+                <TableCell>{tutoria.nombre_estudiante}</TableCell>
                 <TableCell>{tutoria.descripcion}</TableCell>
                 <TableCell>
                   <IconButton><RemoveRedEyeIcon color='primary' /></IconButton>

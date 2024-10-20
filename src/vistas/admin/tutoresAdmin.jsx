@@ -10,9 +10,9 @@ import EditModalAdmin from "../../componentes/admin/editModalAdmin";
 import _ from "lodash";
 import LoadingComponent from "../../utils/LoadingComponente";
 
-const UsersAdmin = () => {
-    const rolUse =ROL.ESTUDIANTE;
-    const title = "Usuarios";
+const TutoresAdmin = () => {
+    const rolUse = ROL.TUTOR;
+    const title = "Tutores";
     const [users, setUsers] = useState(null);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -33,7 +33,6 @@ const UsersAdmin = () => {
             setLoading(false);
             console.log(res.data.data);
             setUsers(res.data.data);
-            console.log("ITEM COUNT:",typeof( res.data.itemCount));
             setTotalResults(Number(res.data.itemCount));
         } catch (error) {
             setLoading(false);
@@ -60,7 +59,7 @@ const UsersAdmin = () => {
             return ROL.ESTUDIANTE;
         }
     };
-    const handleClickDelete = async(dataIndex) => {
+    const handleClickDelete = async (dataIndex) => {
         console.log("dataIndex", dataIndex);
         const user = users[dataIndex];
         console.log("user delete", user);
@@ -209,17 +208,17 @@ const UsersAdmin = () => {
                 filter={false}
             />
             {
-                openModalDelete && 
-                    <DeleteModalUserAdmin open={openModalDelete} setOpen={setOpenModalDelete} username={userDelete?.nombre} id={
-                        userDelete?.id
-                    } renderFunction={loadUsers} />
+                openModalDelete &&
+                <DeleteModalUserAdmin open={openModalDelete} setOpen={setOpenModalDelete} username={userDelete?.nombre} id={
+                    userDelete?.id
+                } renderFunction={loadUsers} />
             }
             {
-                openModalEdit && 
-                    <EditModalAdmin open={openModalEdit} setOpen={setOpenModalEdit} username={userEdit?.nombre} id={userEdit?.id} rol={getRol(userEdit)}renderFunction={loadUsers} />
+                openModalEdit &&
+                <EditModalAdmin open={openModalEdit} setOpen={setOpenModalEdit} username={userEdit?.nombre} id={userEdit?.id} rol={getRol(userEdit)} renderFunction={loadUsers} />
             }
         </>
     )
 }
 
-export default UsersAdmin;
+export default TutoresAdmin;

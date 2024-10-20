@@ -1,4 +1,3 @@
-// src/components/SolicitudModal.js
 import React from 'react';
 import { Modal, Box, Typography, TextField, MenuItem, Button, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,42 +29,55 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
   const [asignaturaElegida, setAsignaturaElegida] = useState(''); // Añade un nuevo estado para almacenar la asignatura elegida
   const [descripcion, setDescripcion] = useState('');
   const { openSnack } = useSnackContext();
+
   const getAsignaturas = async () => {
     getAsignaturasImpartidasPorTutorService(id_tutor).then((res) => {
-      console.log(res.data);
+      console.log("asignaturas:", res.data);
       setAsignaturas(res.data);
     }).catch((error) => {
       console.error('Error al cargar las asignaturas:', error);
-    });/*
-    const res = await axios.get(`${import.meta.env.VITE_BACK_URL}asignaturas`);
-    console.log(res.data);
-    setAsignaturas(res.data);*/
+    });
   };
+
   useEffect(() => {
     getAsignaturas();
   }, []);
+
   const handleChangeAsignatura = (e) => {
     console.log(e.target.value);
-    setAsignaturaElegida(e.target.value); // Almacena la asign
-  }
+    setAsignaturaElegida(e.target.value); // Almacena la asignatura elegida
+  };
+
   const handleEnviarSolicitud = async () => {
+    // Verificar que todos los campos obligatorios estén rellenos
+    if (!asignaturaElegida || !modalidad || !fecha.isValid() || !hora.isValid()) {
+      openSnack('Por favor, rellena todos los campos obligatorios', 'error');
+      return;
+    }
+
+    console.log("fecha:", fecha);
+    console.log("hora:", hora);
+
     console.log('Enviar solicitud');
     const id_estudiante = JSON.parse(localStorage.getItem('usuario')).id;
 
-    console.log("idest:", id_estudiante, "idtut:", id_tutor, asignaturaElegida, modalidad, fecha.format('YYYY-MM-DD'), hora.format('HH:mm'), descripcion
-    );
+    console.log("idest:", id_estudiante, "idtut:", id_tutor, asignaturaElegida, modalidad, fecha.format('YYYY-MM-DD'), hora.format('HH:mm'), descripcion);
     const fechaHora = `${fecha.format('YYYY-MM-DD')}T${hora.format('HH:mm')}:00`;
 
-    const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/solicitudes/subir`, 
-      { id_estudiante, id_tutor, id_asignatura: asignaturaElegida, modalidad, 
-        fecha: fecha.format('YYYY-MM-DD'), hora: fechaHora, descripcion 
-      });
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/solicitudes/subir`, 
+        { id_estudiante, id_tutor, id_asignatura: asignaturaElegida, modalidad, 
+          fecha: fecha.format('YYYY-MM-DD'), hora: fechaHora, descripcion 
+        });
 
-    console.log(res.data);
-    handleClose();
-    openSnack('Solicitud enviada', 'success');
-  }
-
+      console.log(res.data);
+      handleClose();
+      openSnack('Solicitud enviada', 'success');
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+      openSnack('Hubo un problema al enviar la solicitud', 'error');
+    }
+  };
 
   return (
     <Modal
@@ -101,7 +113,6 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
           margin="normal"
           label="Asignatura"
           onChange={handleChangeAsignatura}
-
         >
           {asignaturas.map((asignatura) => (
             <MenuItem key={asignatura.codigo} value={asignatura.codigo_asignatura}>{asignatura.nombre_asignatura}</MenuItem>
@@ -123,13 +134,13 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Stack direction="row" spacing={3} marginTop={3}>
             <DatePicker
-              label="Fecha (Opcional)"
+              label="Fecha"
               value={fecha}
               onChange={(newValue) => setFecha(newValue)}
               renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
             />
             <TimePicker
-              label="Hora (Opcional)"
+              label="Hora"
               value={hora}
               onChange={(newValue) => setHora(newValue)}
               renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}

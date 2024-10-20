@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { getUsersService } from "../services/usersServices";
+import { DIRECTION, ORDER } from "../constants/filters";
 
 const SearchContext = createContext();
 
@@ -11,14 +12,14 @@ export const SearchContextProvider = ({ children }) => {
   const [searchParams] = useSearchParams();
   const [searchResults, setSearchResults] = useState([]);
   const [filtersReseted, setFiltersReseted] = useState(false);
-  const DIRECTION = {
+/*  const DIRECTION = {
     DESC: 'desc',
     ASC: 'asc'
   };
   const ORDER = {
     VALORACION: 'valoracion',
     PRICE: 'price'
-  };
+  };*/
   const getFilters = ( filtersReseted = false) => {
     const searchParams = new URLSearchParams(window.location.search);
     const filterKeys = ['universidades', 'asignaturas', 'valoraciones'];

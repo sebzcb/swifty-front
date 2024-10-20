@@ -15,6 +15,8 @@ import Snacks from './utils/Snacks';
 import AdminIndex from './vistas/admin';
 import UsersAdmin from './vistas/admin/UsersAdmin';
 import ReportsAdmin from './vistas/admin/ReportsAdmin';
+import TutoresAdmin from './vistas/admin/tutoresAdmin';
+import AdminsAdmin from './vistas/admin/AdminsAdmin';
 function App() {
   const { snackInfo, closeSnack } = useSnackContext();
   return (
@@ -40,6 +42,8 @@ function App() {
                   <Route index element={<UsersAdmin />} /> {/* Ruta por defecto */}
                   <Route path='users' element={<UsersAdmin />} />
                   <Route path='reports' element={<ReportsAdmin />} />
+                  <Route path='tutors' element={<TutoresAdmin />} />
+                  <Route path='admins' element={<AdminsAdmin />} />
                 </Route>
               </Route>
               <Route path='*' element={<h1>404 Not Found</h1>}></Route>

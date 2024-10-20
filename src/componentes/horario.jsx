@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Typography, Paper } from '@mui/material';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -6,6 +6,7 @@ import HorarioVer from './horarioVer';
 import EditarHorario from './editarHorario';
 import Rating from '@mui/material/Rating';
 import { CLAVES } from '../constants/claves';
+import { getWeekNumber } from '../utils/getWeeNumber';
 
 const Horario = () => {
   const [usuario, setUsuario] = useState(null);
@@ -14,6 +15,9 @@ const Horario = () => {
   const [horarioOcupado, setHorarioOcupado] = useState(null);
   const [open, setOpen] = useState(false);
   const [comentarios, setComentarios] = useState([]); // Estado para almacenar los comentarios
+  //horarios
+  const [añoSeleccionado, setAñoSeleccionado] = useState(new Date().getFullYear());
+  const [week, setWeek] = useState(getWeekNumber(new Date()));
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -70,7 +74,7 @@ const Horario = () => {
     const initialData = times.map(
       (time) => days.map((day, index) => (esHorarioOcupado(index, time) ? 'green' : 'red'))
     );
-    console.log("initial:",initialData);
+    console.log("initial:", initialData);
     setData(initialData);
   }, [horarioOcupado]);
 
@@ -88,27 +92,48 @@ const Horario = () => {
         setUsuario(responseUsuario.data);
         setUsuarioExterno(true);
       }
-
+/*
       const responseHorario = await axios.get(`${import.meta.env.VITE_BACK_URL}horario/${idUsuario}`);
       if (responseHorario.status !== 200) {
         throw new Error('Hubo un problema al obtener el horario.');
       }
       const dataHorario = responseHorario.data;
       console.log('Horario del usuario:', dataHorario);
-      setHorarioOcupado(dataHorario);
-/*
-      const initialData = times.map(
-        (time) => days.map((day, index) => (esHorarioOcupado(index, time) ? 'green' : 'red'))
-      );
-      setData(initialData);*/
+      setHorarioOcupado(dataHorario);*/
+      /*
+            const initialData = times.map(
+              (time) => days.map((day, index) => (esHorarioOcupado(index, time) ? 'green' : 'red'))
+            );
+            setData(initialData);*/
     } catch (error) {
       console.error('Hubo un problema al obtener datos:', error);
     }
   };
+  const loadHorario = async () => {
+    try {
+      const responseHorario = await axios.get(`${import.meta.env.VITE_BACK_URL}horario/${idUsuario}/week/${week}/year/${añoSeleccionado}`);
+      if (responseHorario.status !== 200) {
+        throw new Error('Hubo un problema al obtener el horario.');
+      }
+      const dataHorario = responseHorario.data;
+      console.log('Horario del usuario:', dataHorario);
+      setHorarioOcupado(dataHorario);
+    } catch (error) {
+      console.error('Hubo un problema al obtener datos:', error);
+    }
+  }
+  useEffect(() => {
+    console.log("==========00000 RECARGADO HORARIO ============0")
+    loadHorario();
+  }, [week]);
   useEffect(() => {
     console.log("==========00000 RECARGADO HORARIO ============0")
 
-    obtenerUsuarioYHorario();
+    const asyncFunction = async () => {
+      await obtenerUsuarioYHorario();
+      await loadHorario();
+    }
+    asyncFunction()
   }, [idUsuario]);
 
   useEffect(() => {
@@ -136,7 +161,10 @@ const Horario = () => {
   return (
     <>
       <Card>
-        <HorarioVer data={data} handleOpen={handleOpen} usuario={usuario} days={days} times={times} esHorarioOcupado={esHorarioOcupado} />
+        <HorarioVer data={data} handleOpen={handleOpen} usuario={usuario} days={days} times={times} 
+        esHorarioOcupado={esHorarioOcupado} setAñoSeleccionado={setAñoSeleccionado} añoSeleccionado={añoSeleccionado}
+        week={week} setWeek={setWeek}
+        />
       </Card>
 
       {/* Sección para mostrar comentarios y calificaciones */}
@@ -153,7 +181,7 @@ const Horario = () => {
         </Card>
       )}
 
-      <EditarHorario data={data} handleCircleClick={handleCircleClick} open={open} handleClose={handleClose} handleSave={handleSave} horarioOcupado={horarioOcupado} times={times} days={days}/>
+      <EditarHorario data={data} handleCircleClick={handleCircleClick} open={open} handleClose={handleClose} handleSave={handleSave} horarioOcupado={horarioOcupado} times={times} days={days} />
     </>
   );
 };
