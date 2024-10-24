@@ -14,6 +14,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getUniversidadesService } from '../services/universidadesServices';
+import { registerUserService } from '../services/authServices';
 
 const theme = createTheme();
 
@@ -31,6 +33,7 @@ function Copyright(props) {
 }
 
 function Registro() {
+  console.log("registro entro")
   const navigate = useNavigate();
   const [universidades, setUniversidades] = useState([]);
   const [universidad, setUniversidad] = useState('');
@@ -40,7 +43,7 @@ function Registro() {
   useEffect(() => {
     const loadUniversidades = async () => {
       try {
-        const res = await axios.get('http://localhost:3030/universidades');
+        const res = await getUniversidadesService();
         setUniversidades(res.data);
       } catch (error) {
         console.error('Error al cargar universidades:', error);
@@ -96,13 +99,13 @@ function Registro() {
     }
 
     try {
-      const response = await axios.post('http://localhost:3030/auth/registro', {
+      const data = {
         nombre: name,
         correo: email,
         contrasenia: password,
         id_universidad: universidad
-      });
-
+      }
+      const response = await registerUserService(data);
       if (response.status !== 201) {
         throw new Error('Hubo un problema al realizar la solicitud.');
       }
