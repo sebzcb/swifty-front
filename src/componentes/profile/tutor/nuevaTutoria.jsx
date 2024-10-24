@@ -6,8 +6,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSnackContext } from '../context/SnackContext';
-import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
+import { useSnackContext } from '../../../context/SnackContext';
+import { getAsignaturasImpartidasPorTutorService } from '../../../services/asignaturasServices';
 
 const style = {
   position: 'absolute',

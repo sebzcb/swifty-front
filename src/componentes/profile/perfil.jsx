@@ -12,13 +12,13 @@ import ReportIcon from '@mui/icons-material/Report';
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import NuevaTutoria from './nuevaTutoria';
-import Report from './reporte';
-import Calificar from './calificar';
-import EditarPerfilModal from './editarPerfilModal';
-import { getEstudiantesSolicitudesDeTutor } from '../services/tutoresServices';
-import { getAsignaturasImpartidasPorTutorService } from '../services/asignaturasServices';
-import { getUserService } from '../services/usersServices';
+import NuevaTutoria from './tutor/nuevaTutoria';
+import Report from '../profile/reporte';
+import Calificar from '../profile/calificar';
+import EditarPerfilModal from '../profile/editarPerfilModal';
+import { getEstudiantesSolicitudesDeTutor } from '../../services/tutoresServices';
+import { getAsignaturasImpartidasPorTutorService } from '../../services/asignaturasServices';
+import { getUserService } from '../../services/usersServices';
 
 const Perfil = () => {
     const [openModalEditar, setOpenModalEditar] = useState(false);

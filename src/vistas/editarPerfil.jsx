@@ -1,8 +1,7 @@
 import { Container, Grid } from '@mui/material';
-import Perfil from '../componentes/perfil';
-import Horario from '../componentes/horario';
-import TutoresSeguidos from '../componentes/tutoresSeguidos';
 import Navbar from '../componentes/navBar';
+import Perfil from '../componentes/profile/perfil';
+import Horario from '../componentes/profile/horario';
 
 const EdicionPerfil = () => {
     

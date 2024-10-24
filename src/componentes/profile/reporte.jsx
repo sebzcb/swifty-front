@@ -2,7 +2,7 @@ import  { useState } from 'react';
 import { Modal, Box, Typography, TextField, MenuItem, Button, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
-import { useSnackContext } from '../context/SnackContext';
+import { useSnackContext } from '../../context/SnackContext';
 
 const style = {
   position: 'absolute',

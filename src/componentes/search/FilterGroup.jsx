@@ -1,6 +1,6 @@
 import { Accordion, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel, FormGroup, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useSearchContext } from "../context/searchContext";
+import { useSearchContext } from "../../context/searchContext";
 
 const FilterGroup = ({ items, name, filterType }) => {
     const { addFilter, removeFilter, dataShow } = useSearchContext();

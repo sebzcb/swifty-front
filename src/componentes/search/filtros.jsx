@@ -1,7 +1,7 @@
 import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import FilterGroup from './FilterGroup';
-import { getAsignaturasService } from '../services/asignaturasServices';
+import { getAsignaturasService } from '../../services/asignaturasServices';
 
 const Filtros = () => {
   const [universidades, setUniversidades] = useState([]);

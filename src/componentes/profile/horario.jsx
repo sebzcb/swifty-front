@@ -5,8 +5,8 @@ import { useParams } from 'react-router-dom';
 import HorarioVer from './horarioVer';
 import EditarHorario from './editarHorario';
 import Rating from '@mui/material/Rating';
-import { CLAVES } from '../constants/claves';
-import { getWeekNumber } from '../utils/getWeeNumber';
+import { CLAVES } from '../../constants/claves';
+import { getWeekNumber } from '../../utils/getWeeNumber';
 
 const Horario = () => {
   const [usuario, setUsuario] = useState(null);

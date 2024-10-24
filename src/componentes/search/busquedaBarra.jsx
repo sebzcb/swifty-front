@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { IconButton, InputBase, Paper } from "@mui/material";
-import axios from "axios";
-import { useSearchContext } from '../context/searchContext';
+import { useSearchContext } from '../../context/searchContext';
 import SearchIcon from '@mui/icons-material/Search';
 
 const BusquedaBarra = ({ isHomePage, filtros, order }) => {

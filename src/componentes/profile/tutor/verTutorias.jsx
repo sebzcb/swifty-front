@@ -8,9 +8,9 @@ import ModalTutoria from './crearTutoria';
 import axios from 'axios';
 import ConfirmarEliminarTutoriaModal from './confirmarEliminarTutoriaModal';
 import EditarTutoriaModal from './editarTutoriaModal';
-import { useSnackContext } from '../context/SnackContext';
-import { sendEmail } from '../utils/sendEmail';
-import { getUserService } from '../services/usersServices';
+import { useSnackContext } from '../../../context/SnackContext';
+import { sendEmail } from '../../../utils/sendEmail';
+import { getUserService } from '../../../services/usersServices';
 
 function VerTutorias() {
   const [openModal, setOpenModal] = useState(false);
@@ -100,7 +100,7 @@ function VerTutorias() {
     setTutoriaSeleccionadaEditar(tutoria);
     setOpenModalEditar(true);
   }
-  const handleEditarTutoria = async (descripcion, modalidad, fecha, hora, horaFin, maxEstudiantes) => {
+  const handleEditarTutoria = async (descripcion, modalidad, fecha, hora, horaFin, maxEstudiantes,precioHora) => {
     console.log('Editar tutoria backend de id ', tutoriaSeleccionadaEditar.id);
     console.log("datos:", descripcion, modalidad, fecha, hora, horaFin, maxEstudiantes);
     try {
@@ -111,7 +111,8 @@ function VerTutorias() {
         fecha,
         hora,
         horaFin,
-        maxEstudiantes
+        maxEstudiantes,
+        precioHora
       });
       console.log('Tutoria editada con éxito', response.data);
       openSnack('Tutoria editada con éxito', 'success');

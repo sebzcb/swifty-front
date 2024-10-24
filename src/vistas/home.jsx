@@ -6,7 +6,7 @@ import NavBar from '../componentes/navBar';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import BusquedaBarra from '../componentes/busquedaBarra';
+import BusquedaBarra from '../componentes/search/busquedaBarra';
 import { getAsignaturasService } from '../services/asignaturasServices';
 
 function Home() {
@@ -25,13 +25,16 @@ function Home() {
     };
     useEffect(() => {
         const getTutoresBackend = async () => {
-            await axios.get(`${import.meta.env.VITE_BACK_URL}usuario/lista/tutores`)
+            const ruta = `${import.meta.env.VITE_BACK_URL}usuario/lista/tutores`;
+            console.log("getTutoresBackend, ruta:", ruta);
+            await axios.get(ruta)
                 .then((response) => {
                     if (response.status !== 200) {
                         throw new Error('Hubo un problema al realizar la solicitud.');
                         return;
                     }
                     const data = response.data;
+                    console.log("respuesta", data);
                     getTutores(data);
                 }).catch((error) => {
                     console.error('Hubo un problema al realizar la solicitud:', error);

@@ -1,7 +1,7 @@
 import  { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import SolicitudTutoriaModal from './solicitudTutoriaModal';
+import SolicitudTutoriaModal from '../../solicitudTutoriaModal';
 import axios from 'axios';
 
 function VerSolicitudes() {

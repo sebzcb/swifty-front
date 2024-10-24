@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { TextField, Select, MenuItem, Button, Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, Autocomplete, Divider, IconButton, Icon } from "@mui/material";
-import { validatePhone } from "../utils/validatePhone";
-import { addAsignaturasImpartirService, deleteAsignaturasImpartirService, editAsignaturasImpartirService, getAsignaturasImpartidasPorTutorService } from "../services/asignaturasServices";
-import { useSnackContext } from "../context/SnackContext";
+import { TextField, Select, MenuItem, Button, Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, Autocomplete, Divider, IconButton, Grid, Paper, List, ListItem, ListItemText, ListItemSecondaryAction } from "@mui/material";
+import { validatePhone } from "../../utils/validatePhone";
+import { addAsignaturasImpartirService, deleteAsignaturasImpartirService, editAsignaturasImpartirService, getAsignaturasImpartidasPorTutorService } from "../../services/asignaturasServices";
+import { useSnackContext } from "../../context/SnackContext";
 import { Delete, Edit } from "@mui/icons-material";
+import { TUTORIA_INFO } from "./tutor/tutoriainfo";
 
 const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
     const [universidades, setUniversidades] = useState([]);
@@ -78,11 +79,14 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
         //check data
         if (!usuario) return;
         const telephone = usuario.telefono;
-        const validatePhoneCheck = validatePhone(telephone);
         console.log("TELEFONO:", telephone);
-        if (!validatePhoneCheck) {
-            alert("El teléfono debe tener el formato +56912345678");
-            return;
+        if(telephone != "No especificado"){
+            const validatePhoneCheck = validatePhone(telephone);
+            console.log("TELEFONO:", telephone);
+            if (!validatePhoneCheck) {
+                alert("El teléfono debe tener el formato +56912345678");
+                return;
+            }
         }
         try {
             const res = await axios.put(`${import.meta.env.VITE_BACK_URL}usuario/update`, usuario);
@@ -116,6 +120,10 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
             alert("Debes ingresar un precio");
             return;
         }
+        if(precio < TUTORIA_INFO.MIN_PRICE || precio > TUTORIA_INFO.MAX_PRICE){
+            alert(`El precio por hora debe estar entre $${TUTORIA_INFO.MIN_PRICE} y $${TUTORIA_INFO.MAX_PRICE}`);
+            return;
+        }
         const codigo = asignaturaAdd.codigo;
         const id_universidad = asignaturaAdd.id_universidad;
         const id_tutor = usuario.id;
@@ -147,6 +155,10 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
         }
         if (!asignaturaEditPrecio) {
             alert("Debes ingresar un precio");
+            return;
+        }
+        if(asignaturaEditPrecio < TUTORIA_INFO.MIN_PRICE || asignaturaEditPrecio > TUTORIA_INFO.MAX_PRICE){
+            alert(`El precio por hora debe estar entre $${TUTORIA_INFO.MIN_PRICE} y $${TUTORIA_INFO.MAX_PRICE}`);
             return;
         }
         const codigo = asignaturaEdit.codigo_asignatura;
@@ -187,16 +199,17 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
     }
     const RowAsignatura = ({ asignatura }) => {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography>{asignatura.nombre_asignatura} - {asignatura.codigo_asignatura} - ${asignatura.precio}</Typography>
-                <IconButton onClick={() => handleEditAsignaturaImpartida(asignatura,true)}>
-                    <Edit />
-                </IconButton>
-                <IconButton onClick={() => handleDeleteAsignaturaImpartida(asignatura,true)}>
-                    <Delete />
-                </IconButton>
-            </Box>
-
+            <ListItem>
+                <ListItemText primary={`${asignatura.nombre_asignatura} - ${asignatura.codigo_asignatura}`} secondary={`Precio: $${asignatura.precio}`} />
+                <ListItemSecondaryAction>
+                    <IconButton edge="end" onClick={() => handleEditAsignaturaImpartida(asignatura, true)}>
+                        <Edit />
+                    </IconButton>
+                    <IconButton edge="end" onClick={() => handleDeleteAsignaturaImpartida(asignatura, true)}>
+                        <Delete />
+                    </IconButton>
+                </ListItemSecondaryAction>
+            </ListItem>
         )
     }
     if (!usuario) return null;
@@ -240,49 +253,64 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                             ))}
                         </Select>
                     </Box>
+                    {
+                        isTutor && (
+                            <>
+                                <Divider sx={{ width: '100%', pb: '20px' }} />
+                                <Typography gutterBottom variant="h6">
+                                    Asignaturas impartidas
+                                </Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6}>
+                                        <Autocomplete
+                                            options={asignaturas}
+                                            getOptionLabel={(option) => option.nombreasignatura}
+                                            onChange={(event, newValue) => {
+                                                setAsignaturaAdd(newValue);
+                                            }}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    variant="standard"
+                                                    label="Asignaturas"
+                                                    placeholder="Asignaturas"
+                                                />
+                                            )}
+                                            sx={{ width: '100%' }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            name="precio"
+                                            label="Precio por hora"
+                                            value={precio}
+                                            onChange={handleAddPrecio}
+                                            fullWidth
+                                            type="number"
+                                            InputProps={{ inputProps: { min: TUTORIA_INFO.MIN_PRICE, max: TUTORIA_INFO.MAX_PRICE } }}
+                                        />
+                                    </Grid>
+                                </Grid>
+                                <Button variant="contained" color="primary" onClick={handleAddAsignaturaImpartida} sx={{ mt: 2 }}>
+                                    Agregar asignatura
+                                </Button>
+                                <Typography variant="h6" sx={{ mt: 2 }}>
+                                    Asignaturas impartidas
+                                </Typography>
+                                <Paper elevation={3} sx={{ width: '100%', mt: 2 }}>
+                                    <List>
+                                        {
+                                            asignaturasImpartidas &&
+                                            asignaturasImpartidas.map((asignatura) => (
+                                                <RowAsignatura key={asignatura.codigo} asignatura={asignatura} />
+                                            ))
+                                        }
+                                    </List>
+                                </Paper>
+                            </>
+                        )
+                    }
                 </DialogContent>
-                {
-                    isTutor && (
-                        <>
-                            <Divider sx={{ width: '100%', pb: '50px' }} />
-                            <Typography gutterBottom variant="h6">
-                                Asignaturas impartidas
-                            </Typography>
-                            <Autocomplete
-                                options={asignaturas}
-                                getOptionLabel={(option) => option.nombreasignatura}
-                                onChange={(event, newValue) => {
-                                    setAsignaturaAdd(newValue);
-                                }}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        variant="standard"
-                                        label="Asignaturas"
-                                        placeholder="Asignaturas"
-                                    />
-                                )}
-                                sx={{ width: '100%' }}
-                            />
-                            <TextField name="precio" label="Precio por hora" value={usuario.precio} onChange={
-                                handleAddPrecio
-                            } fullWidth
-                                type="number"
-                                InputProps={{ inputProps: { min: 0 } }}>
-                            </TextField>
-                            <Button onClick={handleAddAsignaturaImpartida}>Agregar asignatura</Button>
-                            <Typography> Asignaturas impartidas </Typography>
-                            {
-                                asignaturasImpartidas &&
-                                asignaturasImpartidas.map((asignatura) => (
-                                    <Box key={asignatura.codigo}>
-                                        <RowAsignatura asignatura={asignatura} />
-                                    </Box>
-                                ))
-                            }
-                        </>
-                    )
-                }
                 <DialogActions>
                     <Button onClick={() => setOpen(false)}>Cancelar</Button>
                     <Button onClick={handleSubmit}>Guardar cambios</Button>
@@ -312,7 +340,7 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                         (event) => setAsignaturaEditPrecio(event.target.value)
                     } fullWidth
                         type="number"
-                        InputProps={{ inputProps: { min: 0 } }}>
+                        InputProps={{ inputProps: { min: TUTORIA_INFO.MIN_PRICE, max: TUTORIA_INFO.MAX_PRICE } }}>
                     </TextField>
                 </DialogContent>
                 <DialogActions>

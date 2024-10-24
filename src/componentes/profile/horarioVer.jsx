@@ -1,7 +1,7 @@
 import { CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { getWeekNumber } from '../utils/getWeeNumber';
-import { getFutureWeeks } from '../utils/getFutureWeeks';
+import { getWeekNumber } from '../../utils/getWeeNumber';
+import { getFutureWeeks } from '../../utils/getFutureWeeks';
 
 const HorarioVer = ({ data, handleOpen, usuario, days, times,añoSeleccionado, setAñoSeleccionado, week, setWeek }) => {
     // Si data no está definido, inicializamos todos los valores a 'green'

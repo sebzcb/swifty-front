@@ -1,9 +1,9 @@
 import {  useEffect, useState } from 'react';
 import { Container, Box, Typography, MenuItem, Select, Pagination, FormControl, InputLabel } from '@mui/material';
-import Filtros from '../componentes/filtros';
+import Filtros from '../componentes/search/filtros';
 import TutorCard from '../componentes/tutorCard';
 import Navbar from '../componentes/navBar';
-import BusquedaBarra from '../componentes/busquedaBarra';
+import BusquedaBarra from '../componentes/search/busquedaBarra';
 import { useNavigate } from 'react-router-dom';
 import { useSearchContext } from '../context/searchContext';
 import LoadingComponent from '../utils/LoadingComponente';

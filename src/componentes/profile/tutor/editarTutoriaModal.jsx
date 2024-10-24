@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Box, TextField, Button, Select, MenuItem, Typography } from '@mui/material';
+import { TUTORIA_INFO } from './tutoriainfo';
 
 const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }) => {
     const [descripcion, setDescripcion] = useState(tutoria.descripcion);
@@ -8,6 +9,10 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
     const [horaInicio, setHoraInicio] = useState(tutoria.hora);
     const [horaFin, setHoraFin] = useState(tutoria.horafinal);
     const [maxEstudiantes, setMaxEstudiantes] = useState(tutoria.cantidadmaximaestudiantes);
+    const [precioHora, setPrecioHora] = useState(tutoria.precioporhora);
+    // Obtener la fecha de hoy en formato YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0];
+
     console.log(tutoria);
     const handleGuardar = async () => {
         // Aquí puedes manejar la lógica para guardar los cambios
@@ -16,8 +21,12 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
             alert('La hora final debe ser mayor que la hora de inicio');
             return;
         }
+        if(precioHora < TUTORIA_INFO.MIN_PRICE || precioHora > TUTORIA_INFO.MAX_PRICE){
+            alert(`El precio por hora debe estar entre $${TUTORIA_INFO.MIN_PRICE} y $${TUTORIA_INFO.MAX_PRICE}`);
+            return;
+        }
         setOpenModalEditar(false);
-        await handleEditarTutoria(descripcion, modalidad, fecha, horaInicio, horaFin, maxEstudiantes);
+        await handleEditarTutoria(descripcion, modalidad, fecha, horaInicio, horaFin, maxEstudiantes,precioHora);
     };
 
     return (
@@ -69,6 +78,7 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
                     InputLabelProps={{
                         shrink: true,
                     }}
+                    inputProps={{ min: today }}
                 />
                 <TextField
                     label="Hora Inicial"
@@ -101,6 +111,17 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
                     fullWidth
                     InputProps={{ inputProps: { min: 0, max: 100 } }}
                 />
+                     <TextField
+                    label="Precio por hora"
+                    name="precioHora"
+                    value={precioHora}
+                    onChange={(e) => setPrecioHora(e.target.value)}
+                    fullWidth
+                    margin="dense"
+                    type="number"
+                    InputProps={{ inputProps: { min: TUTORIA_INFO.MIN_PRICE, max: TUTORIA_INFO.MAX_PRICE } }}
+                    />
+
                 <Box sx={{display:'flex',gap:'10px'}}>
                 <Button onClick={() => { setOpenModalEditar(false) }} color="primary" variant="contained" sx={{ mt: 2 }}>
                     Cancelar

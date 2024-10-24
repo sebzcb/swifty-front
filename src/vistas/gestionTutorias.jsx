@@ -1,8 +1,8 @@
 // src/App.js
 import  { useState } from 'react';
 import { Container, Button, Box } from '@mui/material';
-import VerTutorias from '../componentes/verTutorias';
-import VerSolicitudes from '../componentes/verSolicitudes';
+import VerTutorias from '../componentes/profile/tutor/verTutorias';
+import VerSolicitudes from '../componentes/profile/tutor/verSolicitudes';
 import Navbar from '../componentes/navBar';
 
 function GestionTutorias() {
