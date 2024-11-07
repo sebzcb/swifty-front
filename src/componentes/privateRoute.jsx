@@ -1,8 +1,7 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { useUserContext } from '../context/UserContext';
 
 export const PrivateRoute = ({ children}) => { //Mientas tanto
-	const location = useLocation();
-	const usuario = localStorage.getItem('usuario');
-
-	return usuario ? children : <Navigate to='/login' />;
+	const { userInfo } = useUserContext();
+	return userInfo ? children : <Navigate to='/login' />;
 };
