@@ -11,7 +11,7 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import ReportIcon from '@mui/icons-material/Report';
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import NuevaTutoria from './tutor/nuevaTutoria';
 import Report from '../profile/reporte';
 import Calificar from '../profile/calificar';
@@ -19,8 +19,11 @@ import EditarPerfilModal from '../profile/editarPerfilModal';
 import { getEstudiantesSolicitudesDeTutor } from '../../services/tutoresServices';
 import { getAsignaturasImpartidasPorTutorService } from '../../services/asignaturasServices';
 import { getUserService } from '../../services/usersServices';
+import { useUserContext } from '../../context/UserContext';
 
 const Perfil = () => {
+    const { userInfo } = useUserContext();
+    const navigate = useNavigate();
     const [openModalEditar, setOpenModalEditar] = useState(false);
     const [usuario, setUsuario] = useState(null);
     const [usuarioExterno, setUsuarioExterno] = useState(false);
@@ -32,8 +35,20 @@ const Perfil = () => {
     const [promedioCalificaciones, setPromedioCalificaciones] = useState(null); // Estado para almacenar el promedio
     const [estudiantes, setEstudiantes] = useState([]);
     const [asignaturasImpartidas, setAsignaturasImpartidas] = useState(null);
-    const handleOpenTutor = () => setOpenModalTutor(true);
-    const handleOpenReport = () => setOpenModalReport(true);
+    const handleOpenTutor = () => {
+        if(!userInfo) {
+            navigate('/login');
+            return;
+        }
+        setOpenModalTutor(true);
+    }
+    const handleOpenReport = () => {
+        if(!userInfo) {
+            navigate('/login');
+            return;
+        }
+        setOpenModalReport(true);
+    }
     const handleOpenCalificar = () => setOpenModalCalificar(true);
 
     const handleCloseTutor = () => setOpenModalTutor(false);
@@ -52,17 +67,22 @@ const Perfil = () => {
             const data = response.data;
             console.log("usauario id",data);
             setUsuario(data);
-            const user = JSON.parse(localStorage.getItem('usuario'));
-            const idUserStorage = user.id;
-            console.log("USER:", idUserStorage);
-            console.log("params user:", idUsuario);
-            const isMismoUsuario = idUserStorage === idUsuario;
-            if (isMismoUsuario) {
-                console.log("es el mismo usuario");
-                setUsuarioExterno(false);
-            }
-            else {
-                console.log("es un usuario externo");
+            //revisar
+            const user = userInfo;
+            if(user){
+                const idUserStorage = user.id;
+                console.log("USER:", idUserStorage);
+                console.log("params user:", idUsuario);
+                const isMismoUsuario = idUserStorage === idUsuario;
+                if (isMismoUsuario) {
+                    console.log("es el mismo usuario");
+                    setUsuarioExterno(false);
+                }
+                else {
+                    console.log("es un usuario externo");
+                    setUsuarioExterno(true);
+                }
+            }else{
                 setUsuarioExterno(true);
             }
             // Llamar a la función para calcular el promedio de calificaciones
@@ -104,8 +124,8 @@ const Perfil = () => {
         loadUsuarios();
     }, [usuarioExterno]);
     useEffect(() => {
-        if (!usuario) return;
-        const id_user_actual = JSON.parse(localStorage.getItem('usuario')).id;
+        if (!userInfo) return;
+        const id_user_actual = userInfo.id;
         console.log("estudiantes:", estudiantes)
         const id_estudiante = estudiantes.find(estudiante => estudiante.id === id_user_actual);
         if (id_estudiante) setTuvoClaseConTutor(true);

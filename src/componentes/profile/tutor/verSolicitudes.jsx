@@ -3,11 +3,13 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import SolicitudTutoriaModal from '../../solicitudTutoriaModal';
 import axios from 'axios';
+import { useUserContext } from '../../../context/UserContext';
 
 function VerSolicitudes() {
   const [openModal, setOpenModal] = useState(false);
   const [solicitudes, setSolicitudes] = useState([]);
   const [solicitudSeleccionada, setSolicitudSeleccionada] = useState({});
+  const { userInfo } = useUserContext();
   const handleClick = (solicitud) => {
     setSolicitudSeleccionada({
       id: solicitud.id,
@@ -22,7 +24,7 @@ function VerSolicitudes() {
   }
 
   const renderSolicitudes = async () => {
-    const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
+    const usuarioLocal = userInfo;
     const idUsuario = usuarioLocal.id;
     console.log('ID Usuario:', idUsuario);
     const response = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/solicitudes`, { id_tutor: idUsuario });

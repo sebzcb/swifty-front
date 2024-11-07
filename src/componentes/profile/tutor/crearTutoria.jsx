@@ -8,6 +8,7 @@ import { useSnackContext } from '../../../context/SnackContext';
 import { sendEmail } from '../../../utils/sendEmail';
 import { getUserService } from '../../../services/usersServices';
 import { TUTORIA_INFO } from './tutoriainfo';
+import { useUserContext } from '../../../context/UserContext';
 
 const ModalTutoria = ({ setOpenModal, loadTutorias }) => {
     const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const ModalTutoria = ({ setOpenModal, loadTutorias }) => {
     const [asignaturas, setAsignaturas] = useState([]); // Añade un nuevo estado para almacenar las asignaturas 
     const clavesArray = Object.keys(CLAVES);
     const { openSnack } = useSnackContext();
-
+    const { userInfo } = useUserContext();
     const handleChangeIdEstudiante = (e, value) => {
         console.log("value:", value);
         setIdEstudiante(value); // Almacena el id del estudiante seleccionado
@@ -45,7 +46,7 @@ const ModalTutoria = ({ setOpenModal, loadTutorias }) => {
     };
 
     const getAsignaturas = async () => {
-        const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
+        const id_tutor = userInfo.id;
         getAsignaturasImpartidasPorTutorService(id_tutor).then((res) => {
             console.log(res.data);
             setAsignaturas(res.data);
@@ -92,7 +93,7 @@ const ModalTutoria = ({ setOpenModal, loadTutorias }) => {
             const descripcion = formData.descripcion;
             const modalidad = formData.modalidad;
             const codigo_asignatura = formData.codigo_asignatura;
-            const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+            const nombreTutor = userInfo.nombre;
             const msj = `Hola ${nombreEstudiante},\n\nSe ha creado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
             await sendEmail(correoEstudianteAyudado, 'Tutoría programada', msj);
             openSnack('Correo de notificación enviado exitosamente', 'success');
@@ -125,7 +126,7 @@ const ModalTutoria = ({ setOpenModal, loadTutorias }) => {
         const currentDate = new Date();
         const selectedDate = new Date(formData.fecha);
         console.log(formData);
-        const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
+        const id_tutor = userInfo.id;
         console.log("id_tutor", id_tutor);
         if (!idEstudiante) {
             alert('Debes seleccionar un estudiante');
@@ -185,7 +186,7 @@ const ModalTutoria = ({ setOpenModal, loadTutorias }) => {
     }, [open]);
 
     const loadUsuarios = async () => {
-        const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
+        const id_tutor = userInfo.id;
         getEstudiantesSolicitudesDeTutor(id_tutor).then((res) => {
             setEstudiantes([...res]);
         }).catch((error) => {

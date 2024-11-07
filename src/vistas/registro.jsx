@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -13,9 +13,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { getUniversidadesService } from '../services/universidadesServices';
 import { registerUserService } from '../services/authServices';
+import { validatePassword } from '../utils/validatePassword';
+import { validateEmail } from '../utils/validateEmail';
 
 const theme = createTheme();
 
@@ -52,11 +53,6 @@ function Registro() {
     loadUniversidades();
   }, []);
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const validateName = (name) => {
     const nameRegex = /^[a-zA-Z\s]+$/;
     return nameRegex.test(name);
@@ -79,7 +75,7 @@ function Registro() {
       validationErrors.email = 'Correo no válido';
     }
 
-    if (password === '') {
+    if (!validatePassword(password)) {
       validationErrors.password = 'La contraseña es requerida';
     }
 
@@ -122,9 +118,7 @@ function Registro() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <img src="/logo.png" alt="Logo" style={{ width: '80px', height: '80px' }} onClick={() => navigate('/')} />
           <Typography component="h1" variant="h5">
             Registrarse
           </Typography>

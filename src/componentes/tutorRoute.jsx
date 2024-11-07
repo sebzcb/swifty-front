@@ -1,6 +1,9 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { useUserContext } from '../context/UserContext';
+import { ROL } from '../constants/rol';
 
 export const TutorRoute = ({ children}) => { //Mientas tanto
-	const usuario = JSON.parse(localStorage.getItem('usuario'));
-	return usuario && usuario?.rol == 'tutor' ? children : <Navigate to='/login' />;
+	const { userInfo } = useUserContext();
+	const usuario = userInfo;
+	return usuario && usuario?.rol == ROL.TUTOR ? children : <Navigate to='/login' />;
 };

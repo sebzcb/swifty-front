@@ -3,6 +3,7 @@ import { Modal, Box, Typography, TextField, MenuItem, Button, IconButton, Stack 
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useSnackContext } from '../../context/SnackContext';
+import { useUserContext } from '../../context/UserContext';
 
 const style = {
   position: 'absolute',
@@ -23,7 +24,7 @@ const Report = ({ open, handleClose, idUsuario }) => {
   const [error, setError] = useState('');
   const [ticket, setTicket] = useState(null);
   const {openSnack} = useSnackContext();
-  
+  const { userInfo } = useUserContext();
   const motivosReporte = ['Acoso', 'Spam', 'Contenido inapropiado', 'Otros'];
 
   const handleEnviarReporte = async () => {
@@ -33,7 +34,7 @@ const Report = ({ open, handleClose, idUsuario }) => {
     }
 
     try {
-      const id_usuario_reporto = JSON.parse(localStorage.getItem('usuario')).id;
+      const id_usuario_reporto = userInfo.id;
       const datosReporte = {
         id_reportado: idUsuario,
         id_usuario_reporto,

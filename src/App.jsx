@@ -17,8 +17,15 @@ import UsersAdmin from './vistas/admin/UsersAdmin';
 import ReportsAdmin from './vistas/admin/ReportsAdmin';
 import TutoresAdmin from './vistas/admin/tutoresAdmin';
 import AdminsAdmin from './vistas/admin/AdminsAdmin';
+import { RecuperarContrasena } from './vistas/RecuperarContrasena';
+import { useUserContext } from './context/UserContext';
+import LoadingComponent from './utils/LoadingComponente';
 function App() {
   const { snackInfo, closeSnack } = useSnackContext();
+  const { userInfoLoading } = useUserContext();
+  if (userInfoLoading) {
+    return <LoadingComponent />;
+  }
   return (
     <>
       <Router>
@@ -45,6 +52,7 @@ function App() {
                   <Route path='tutors' element={<TutoresAdmin />} />
                   <Route path='admins' element={<AdminsAdmin />} />
                 </Route>
+                <Route path='recuperarcontrasena' element={<RecuperarContrasena/>}></Route>
               </Route>
               <Route path='*' element={<h1>404 Not Found</h1>}></Route>
             </Routes>

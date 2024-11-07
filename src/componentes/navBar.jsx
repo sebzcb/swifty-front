@@ -3,15 +3,15 @@ import SchoolIcon from '@mui/icons-material/School';
 import MenuIcon from '@mui/icons-material/Menu';
 import { deepOrange } from '@mui/material/colors';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SolicitudSerTutor from './solicitudSerTutor';
 import SolicitudSerTutorv2 from './solicitudSerTutorv2';
 import { ROL } from '../constants/rol';
+import { useUserContext } from '../context/UserContext';
+import { logoutService } from '../services/usersServices';
 
 function Navbar() {
-    const [usuario, setUsuario] = useState(null);
-
+    const { userInfo } = useUserContext();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -37,9 +37,10 @@ function Navbar() {
 
     const cerrarSesion = (e) => {
         e.preventDefault();
-        localStorage.removeItem('usuario');
-        setUsuario(null);
-        navigate('/');
+        logoutService().then(() => 
+            //recargar la pagina
+            window.location.reload()
+        ).catch((error) => console.error('Error al cerrar sesión:', error));
     }
     
     const iniciarSesion = (e) => {
@@ -53,7 +54,8 @@ function Navbar() {
 
     const verPerfil = (e)=>{
         e.preventDefault();
-        navigate('/' + usuario.id);
+        console.log('ver perfil id '+userInfo.id);
+        navigate('/' + userInfo.id);
     }
 
     const gestionarTutorias = (e)=>{
@@ -69,12 +71,6 @@ function Navbar() {
         handleOpenTutor();
         console.log('solicitar ser tutor'); 
     }
-
-    useEffect(() => {
-        setUsuario(JSON.parse(localStorage.getItem('usuario')));
-        // setUsuario(usuarioActual);
-    }, []);
-
     //{"rol":"tutor"}
     return (
         <>
@@ -82,25 +78,26 @@ function Navbar() {
                 <Toolbar>
                     <Container style={{ flexGrow: 1, display: 'flex', flexDirection: 'row', gap:'20px' }}>
                         <Button color="inherit" onClick={handleHome}>
+                            <img src="/logo.png" alt="Logo" style={{ width: '60px', height: '60px'}} onClick={() => navigate('/')} />
                             <Typography variant="h6" >
                                 Swifty
                             </Typography>
                         </Button>
                         {
-                            usuario != null && usuario.rol === ROL.ESTUDIANTE &&
+                            userInfo != null && userInfo.rol === ROL.ESTUDIANTE &&
                             <Button color="inherit" onClick={solicitarSerTutor}>
                                 <SchoolIcon style={{ marginRight: '20px' }} /> Solicitar ser tutor
                             </Button>
                         }
                         {
-                            usuario != null && usuario.rol === ROL.TUTOR &&
+                            userInfo != null && userInfo.rol === ROL.TUTOR &&
                             <Button color="inherit" onClick={gestionarTutorias}>
                                 <ManageSearchIcon style={{ marginRight: '20px' }} /> Gestionar tutorias
                             </Button>
                         }
                     </Container>
                     {
-                        usuario == null ? 
+                        userInfo == null ? 
                         <>
                             <Button color="inherit" onClick={iniciarSesion}>Iniciar sesión</Button>
                             <Button color="inherit" onClick={registro}>Regístrate</Button>
@@ -124,7 +121,7 @@ function Navbar() {
 */}                                
 {/*                                <MenuItem onClick={handleClose}>Mensajes</MenuItem>
 */}                                {
-                                    usuario.rol == ROL.ADMINISTRADOR && 
+                                    userInfo.rol == ROL.ADMINISTRADOR && 
                                     <MenuItem onClick={verAdminPanel}>Administrador</MenuItem>
 
                                 }
@@ -132,7 +129,7 @@ function Navbar() {
                             </Menu>
 
                             <IconButton color="inherit" onClick={verPerfil}>
-                                <Avatar sx={{ bgcolor: deepOrange[500] }}>{usuario.nombre[0]}</Avatar>
+                                <Avatar sx={{ bgcolor: deepOrange[500] }}>{userInfo.nombre[0]}</Avatar>
                             </IconButton>
                         </>
                     }

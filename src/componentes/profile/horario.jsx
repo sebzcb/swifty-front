@@ -7,6 +7,7 @@ import EditarHorario from './editarHorario';
 import Rating from '@mui/material/Rating';
 import { CLAVES } from '../../constants/claves';
 import { getWeekNumber } from '../../utils/getWeeNumber';
+import { useUserContext } from '../../context/UserContext';
 
 const Horario = () => {
   const [usuario, setUsuario] = useState(null);
@@ -18,7 +19,7 @@ const Horario = () => {
   //horarios
   const [añoSeleccionado, setAñoSeleccionado] = useState(new Date().getFullYear());
   const [week, setWeek] = useState(getWeekNumber(new Date()));
-
+  const { userInfo } = useUserContext();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -80,7 +81,7 @@ const Horario = () => {
 
   const obtenerUsuarioYHorario = async () => {
     try {
-      const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
+      const usuarioLocal = userInfo;
       if (usuarioLocal && usuarioLocal.id === idUsuario) {
         setUsuario(usuarioLocal);
         setUsuarioExterno(false);
