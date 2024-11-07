@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { ROL } from "../../constants/rol";
-import { IconButton } from "@mui/material";
+import { IconButton, Select } from "@mui/material";
 import { Delete, Edit, RemoveRedEye } from "@mui/icons-material";
 import DefaultTablePagination from "../../utils/defaultTablePaginations";
 import _ from "lodash";
 import LoadingComponent from "../../utils/LoadingComponente";
 import { getReportesService } from "../../services/reportsService";
 import ModalReport from "../../componentes/admin/modalReport";
+import { REPORT_STATE } from "../../constants/reportState";
 
 const ReportsAdmin = () => {
     const title = "Reportes";
@@ -18,23 +19,11 @@ const ReportsAdmin = () => {
     const [totalResults, setTotalResults] = useState(0);
     const [openModalReport, setOpenModalReport] = useState(false);
     const [reportEdit, setReportEdit] = useState(null);
-    /*const loadUsers = async () => {
-        try {
-            setLoading(true);
-            const res = await getUsersService(searchValue, page, ORDER.VALORACION, DIRECTION.DESC, {}, rolUse);
-            console.log("ejecuto load users res:", res);
-            setLoading(false);
-            console.log(res.data.data);
-            setUsers(res.data.data);
-            setTotalResults(res.data.itemCount);
-        } catch (error) {
-            setLoading(false);
-            console.log(error);
-        }
-    };*/
+    const [estadosReportesSearch, setEstadosReportesSearch] = useState([REPORT_STATE.EN_PROCESO,REPORT_STATE.PENDIENTE]);
     const loadReports = async () => {
+        console.log("Estado de los reportes:",estadosReportesSearch);
         try {
-            const res = await getReportesService(searchValue, page);
+            const res = await getReportesService(searchValue, page,estadosReportesSearch);
             console.log("ejecuto load reports res:", res);
             setLoading(false);
             console.log(res.data.data);
@@ -45,25 +34,14 @@ const ReportsAdmin = () => {
             console.log(error);
         }
     };
-
     useEffect(() => {
         console.log("ejecuto useeffect");
         loadReports();
-    }, [page, pageSize]);
+    }, [page, pageSize,estadosReportesSearch]);
 
     const handleChangePage = (pageAux, pageSizeAux) => {
         setPage(pageAux + 1);
         setPageSize(pageSizeAux);
-    };
-
-    const getRol = (user) => {
-        if (user.id_administrador) {
-            return ROL.ADMINISTRADOR;
-        } else if (user.id_tutor) {
-            return ROL.TUTOR;
-        } else {
-            return ROL.ESTUDIANTE;
-        }
     };
     const handleClickEdit = (dataIndex) => {
         console.log("dataIndex", dataIndex);
@@ -78,23 +56,31 @@ const ReportsAdmin = () => {
             name: "id",
             label: "ID Reporte",
             options: {
-                filter: true,
+                filter: false,
                 sort: true,
             },
+        },
+        {
+            name:"estado",
+            label:"Estado",
+            options:{
+                filter:true,
+                sort:true,
+            }
         },
         {
             name: "id_usuario_reporto",
             label: "ID Autor",
             options: {
-                filter: true,
                 sort: true,
+                filter: false,
             },
         },
         {
             name: "id_reportado",
             label: "ID Reportado",
             options: {
-                filter: true,
+                filter: false,
                 sort: true,
             },
         },
@@ -102,7 +88,7 @@ const ReportsAdmin = () => {
             name: "motivo",
             label: "Motivo",
             options: {
-                filter: true,
+                filter: false,
                 sort: true,
             },
         },
@@ -110,7 +96,7 @@ const ReportsAdmin = () => {
             name: "detalles",
             label: "Detalles",
             options: {
-                filter: true,
+                filter: false,
                 sort: false,
             },
         },
@@ -118,7 +104,7 @@ const ReportsAdmin = () => {
             name: "fecha_reporte",
             label: "Fecha de Reporte",
             options: {
-                filter: true,
+                filter: false,
                 sort: true,
                 customBodyRender: (value) => {
                     return new Date(value).toLocaleDateString();
@@ -194,6 +180,26 @@ const ReportsAdmin = () => {
                 handleSearch={handleSearch}
                 loading={loading}
                 filter={false}
+                customToolbar={
+                    ()=>{
+                        return (
+                            <div>
+                                <Select
+                                    native
+                                    value={estadosReportesSearch}
+                                    onChange={(e) => {
+                                        setEstadosReportesSearch(e.target.value);
+                                    }}
+                                >
+                                    <option value={[REPORT_STATE.EN_PROCESO]}>{REPORT_STATE.EN_PROCESO}</option>
+                                    <option value={[REPORT_STATE.PENDIENTE]}>{REPORT_STATE.PENDIENTE}</option>
+                                    <option value={[REPORT_STATE.RESUELTO]}>{REPORT_STATE.RESUELTO}</option>
+                                    <option value={[REPORT_STATE.EN_PROCESO,REPORT_STATE.PENDIENTE]}>{REPORT_STATE.EN_PROCESO} o {REPORT_STATE.PENDIENTE}</option>
+                                </Select>
+                            </div>
+                        );
+                    }
+                }
             />
             {
                 openModalReport && <ModalReport

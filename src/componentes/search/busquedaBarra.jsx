@@ -67,7 +67,7 @@ const BusquedaBarra = ({ isHomePage, filtros, order }) => {
             </IconButton>
             <InputBase
                 sx={{ ml: 1, flex: 1, color: 'black' }}
-                placeholder="Search something!"
+                placeholder="Busca por nombre o alguna palabra clave"
                 inputProps={{ 'aria-label': 'search google maps' }}
                 value={searchTerm} // Agrega esta línea
                 onChange={e => setSearchTerm(e.target.value)} // Agrega esta línea

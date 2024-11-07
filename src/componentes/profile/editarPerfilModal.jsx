@@ -6,8 +6,11 @@ import { addAsignaturasImpartirService, deleteAsignaturasImpartirService, editAs
 import { useSnackContext } from "../../context/SnackContext";
 import { Delete, Edit } from "@mui/icons-material";
 import { TUTORIA_INFO } from "./tutor/tutoriainfo";
+import { useUserContext } from "../../context/UserContext";
+import { ROL } from "../../constants/rol";
 
 const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
+    const {userInfo,userInfoLoading} = useUserContext();    
     const [universidades, setUniversidades] = useState([]);
     const [usuario, setUsuario] = useState(null);
     const [isTutor, setIsTutor] = useState(false);
@@ -23,6 +26,7 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [asignaturaDelete, setAsignaturaDelete] = useState(null);
     const { openSnack } = useSnackContext();
+
     const loadData = async () => {
         try {
             console.log("LOAD DATA de id:", id_usuario)
@@ -56,9 +60,9 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
     }, [isTutor]);
     useEffect(() => {
         if (!usuario) return;
-        const user = JSON.parse(localStorage.getItem('usuario'));
+        const user = userInfo
         console.log("USER:", user);
-        if (user.rol === 'tutor') {
+        if (user.rol === ROL.TUTOR) {
             setIsTutor(true);
         }
     }, [usuario]);
@@ -213,6 +217,7 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
         )
     }
     if (!usuario) return null;
+    if(userInfoLoading) return <p>Cargando...</p>;
 
     return (
         <>

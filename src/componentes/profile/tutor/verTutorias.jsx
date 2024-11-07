@@ -11,6 +11,7 @@ import EditarTutoriaModal from './editarTutoriaModal';
 import { useSnackContext } from '../../../context/SnackContext';
 import { sendEmail } from '../../../utils/sendEmail';
 import { getUserService } from '../../../services/usersServices';
+import { useUserContext } from '../../../context/UserContext';
 
 function VerTutorias() {
   const [openModal, setOpenModal] = useState(false);
@@ -20,6 +21,7 @@ function VerTutorias() {
   const [tutoriaSeleccionadaEditar, setTutoriaSeleccionadaEditar] = useState(null);
   const [openModalEditar, setOpenModalEditar] = useState(false);
   const {openSnack} = useSnackContext();
+  const { userInfo } = useUserContext();
   const handleCrearTutoria = () => {
     console.log('Crear tutoria');
     setOpenModal(true);
@@ -38,7 +40,7 @@ function VerTutorias() {
   const loadTutorias = async () => {
     console.log('Cargar tutorias');
     try {
-      const id_tutor = JSON.parse(localStorage.getItem('usuario')).id;
+      const id_tutor = userInfo.id;
       const res = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/lista/tutorias`, { id_tutor });
       console.log("load tutorias:",res.data);
       setTutorias(res.data);
@@ -79,7 +81,7 @@ function VerTutorias() {
       const descripcion = tutoriaEliminada.descripcion;
       const modalidad = tutoriaEliminada.modalidad;
       const codigo_asignatura = tutoriaEliminada.codigoasignatura;
-      const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+      const nombreTutor = userInfo.nombre;
       const msjEmailEnviarEstudiante = `Hola ${nombreEstudiante},\n\nSe ha eliminado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
       await sendEmail(correoEstudianteAyudado, 'Tutoría eliminada', msjEmailEnviarEstudiante);
       await loadTutorias();
@@ -142,7 +144,7 @@ function VerTutorias() {
       const descripcion2 = tutoriaData.descripcion;
       const modalidad2 = tutoriaData.modalidad;
       const codigo_asignatura = tutoriaData.codigoasignatura;
-      const nombreTutor = JSON.parse(localStorage.getItem('usuario')).nombre;
+      const nombreTutor = userInfo.nombre;
       const msjEmailEnviarEstudiante = `Hola ${nombreEstudiante},\n\nSe ha editado una tutoría contigo para la asignatura ${codigo_asignatura}.\n\nFecha: ${fechaTutorial}\nHora de inicio: ${horaInicioTutorial}\nHora de fin: ${horaFinTutorial}\nModalidad: ${modalidad2}\nPrecio por hora: $${precioPorHora}\nDescripción: ${descripcion2}\n\nTutor: ${nombreTutor}\n\nSaludos,\nSwifty.`;
       await sendEmail(correoEstudianteAyudado, 'Tutoría editada', msjEmailEnviarEstudiante);
       setOpenModalEditar(false);

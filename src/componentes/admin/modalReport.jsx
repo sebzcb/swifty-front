@@ -1,16 +1,20 @@
-import { Box, Button, Typography, Divider, TextField } from "@mui/material";
+import { Box, Button, Typography, Divider, TextField, Select } from "@mui/material";
 import CustomModal from "../../utils/Modal";
 import { useSnackContext } from "../../context/SnackContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUserService } from "../../services/usersServices";
+import { REPORT_STATE } from "../../constants/reportState";
+import { editReporteService } from "../../services/reportsService";
 
 const ModalReport = ({ open, setOpen, report, renderFunction }) => {
     const { openSnack } = useSnackContext();
     const navigate = useNavigate();
     const [usuarioReporto, setUsuarioReporto] = useState(null); // Quien hizo el reporte
     const [usuarioReportado, setUsuarioReportado] = useState(null); // Quien fue reportado
-    const { motivo, detalles, fecha_reporte, id_reportado, id_usuario_reporto } = report;
+    const { id, motivo, detalles, fecha_reporte, id_reportado, id_usuario_reporto, estado } = report;
+    const [estadoReporte, setEstadoReporte] = useState(estado);
+    const reportsState = Object.values(REPORT_STATE);
     const loadUserReportAutor = async () => {
         // Lógica para obtener el usuario que reportó
         getUserService(id_usuario_reporto).then((response) => {
@@ -37,7 +41,15 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
     }, [report]);
 
     const handleEdit = () => {
-        // Implementar la lógica de edición aquí
+        const estadoEdit = estadoReporte;
+        const idReport = id;
+        editReporteService(idReport, estadoEdit).then((response) => {
+            openSnack('Reporte editado correctamente', 'success');
+            renderFunction();
+        }).catch((error) => {
+            openSnack('Error al editar el reporte', 'error');
+            console.log(error);
+        });
     }
 
     if (!usuarioReporto) { return null; }
@@ -47,6 +59,12 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
         console.log('Ver perfil');
         console.log('id_reportado', id_reportado);
         navigate('/' + id_reportado);
+    }
+    const verPerfilUsuarioReporto = (e) => {
+        e.preventDefault();
+        console.log('Ver perfil');
+        console.log('id_usuario_reporto', id_usuario_reporto);
+        navigate('/' + id_usuario_reporto);
     }
 
     return (
@@ -64,7 +82,13 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
                 }}
             >
                 <Box>
-                    <Divider />
+                    <Divider style={{ margin: '20px 0' }} />
+                    <Box>
+                        <Typography variant="body1"><strong>Motivo:</strong> {motivo}</Typography>
+                        <Typography variant="body1"><strong>Detalles:</strong> {detalles}</Typography>
+                        <Typography variant="body1"><strong>Fecha de reporte:</strong> {new Date(fecha_reporte).toLocaleDateString()}</Typography>
+                    </Box>
+                    <Divider style={{ margin: '20px 0' }} />
                     <Box mt={2} display="flex" justifyContent="space-between">
                         {/* Información del usuario que reportó */}
                         <Box width="48%">
@@ -72,9 +96,15 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
                             <Typography variant="body1"><strong>Nombre:</strong> {usuarioReporto.nombre}</Typography>
                             <Typography variant="body1"><strong>Correo:</strong> {usuarioReporto.correo}</Typography>
                             <Typography variant="body1"><strong>Teléfono:</strong> {usuarioReporto.telefono}</Typography>
-                            <Typography variant="body1"><strong>Género:</strong> {usuarioReporto.genero}</Typography>
-                        </Box>
+                            {
+                                usuarioReporto ? (
+                                    <Button variant="contained" color="primary" onClick={verPerfilUsuarioReporto} sx={{ m: '10px' }}>
+                                        Ver perfil
+                                    </Button>
+                                ) : <Button variant="contained" color="primary" disabled sx={{ m: '10px' }}>Ver perfil</Button>
 
+                            }
+                        </Box>
                         {/* Información del usuario reportado */}
                         <Box width="48%">
                             <Typography variant="subtitle1" gutterBottom><strong>Usuario reportado:</strong></Typography>
@@ -84,46 +114,34 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
                                         <Typography variant="body1"><strong>Nombre:</strong> {usuarioReportado.nombre}</Typography>
                                         <Typography variant="body1"><strong>Correo:</strong> {usuarioReportado.correo}</Typography>
                                         <Typography variant="body1"><strong>Teléfono:</strong> {usuarioReportado.telefono}</Typography>
-                                        <Typography variant="body1"><strong>Género:</strong> {usuarioReportado.genero}</Typography>
                                     </>
                                 ) : (
                                     <Typography variant="body1">Usuario ya no existe</Typography>
                                 )
                             }
+                            {
+                                usuarioReportado ? (
+                                    <Button variant="contained" color="primary" onClick={verPerfil} sx={{ m: '10px' }}>
+                                        Ver perfil
+                                    </Button>
+                                ) : <Button variant="contained" color="primary" disabled sx={{ m: '10px' }}>Ver perfil</Button>
+                            }
                         </Box>
                     </Box>
                     <Divider style={{ margin: '20px 0' }} />
                     <Box>
-                        <Typography variant="h6" gutterBottom> Detalles reporte </Typography>
-                        <Typography variant="body1"><strong>Motivo:</strong> {motivo}</Typography>
-                        <Typography variant="body1"><strong>Detalles:</strong> {detalles}</Typography>
-                        <Typography variant="body1"><strong>Fecha de reporte:</strong> {new Date(fecha_reporte).toLocaleDateString()}</Typography>
+                        <Select
+                            native
+                            value={estadoReporte}
+                            onChange={(e) => setEstadoReporte(e.target.value)}
+                        >
+                            {
+                                reportsState.map((state) => (
+                                    <option key={state} value={state}>{state}</option>
+                                ))
+                            }
+                        </Select>
                     </Box>
-                    <Box>
-                        <Typography variant="h6" gutterBottom>
-                            Acciones
-                        </Typography>
-                        {
-                            usuarioReportado ? (
-                                <Button variant="contained" color="primary" onClick={verPerfil} style={{ marginRight: '10px' }}>
-                                Ver perfil del usuario reportado
-                            </Button>
-                            ) : <Typography variant="body1">No existe perfil del usuario reportado</Typography>
-                        }
-                    </Box>
-                    <Divider style={{ margin: '20px 0' }} />
-                    <Typography variant="body1" gutterBottom> Enviar respuesta al usuario que reportó </Typography>
-                    <TextField
-                        label="Mensaje"
-                        multiline
-                        rows={4}
-                        fullWidth
-                        variant="outlined"
-                        style={{ marginBottom: '20px' }}
-                    />
-                    <Button variant="contained" color="primary">
-                        Enviar correo
-                    </Button>
                 </Box>
             </CustomModal>
         </>

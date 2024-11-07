@@ -3,6 +3,7 @@ import { Modal, Box, Typography, TextField, Button, IconButton, Rating } from '@
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useSnackContext } from '../../context/SnackContext';
+import { useUserContext } from '../../context/UserContext';
 
 const style = {
   position: 'absolute',
@@ -22,10 +23,11 @@ const Calificar = ({ open, handleClose, idUsuario }) => {
   const [error, setError] = useState('');
   const [ticket, setTicket] = useState(null);
   const {openSnack } = useSnackContext();
+  const { userInfo } = useUserContext();
   useEffect(() => {
     const obtenerCalificacionPrevio = async () => {
       try {
-        const id_estudiante = JSON.parse(localStorage.getItem('usuario')).id;
+        const id_estudiante = userInfo.id;
         const response = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/comentario`, {
           id_estudiante,
           id_tutor: idUsuario,
@@ -54,7 +56,7 @@ const Calificar = ({ open, handleClose, idUsuario }) => {
     }
 
     try {
-      const id_estudiante = JSON.parse(localStorage.getItem('usuario')).id;
+      const id_estudiante = userInfo.id;
       const datosCalificacion = {
         id_estudiante,
         id_tutor: idUsuario,

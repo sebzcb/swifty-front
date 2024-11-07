@@ -1,18 +1,16 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { validateEmail } from '../utils/validateEmail';
+import { validatePassword } from '../utils/validatePassword';
 
 const theme = createTheme();
 
@@ -20,8 +18,8 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://your-website.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        Swifty
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -44,8 +42,14 @@ function Login() {
             alert('El correo o contraseña no se ingreso');
             return;
         }
-
-        //Esto es muy poco seguro, pero es solo para pruebas
+        if(!validateEmail(email)){
+            alert('Correo no válido');
+            return;
+        }/*
+        if (!validatePassword(password)) {
+            alert('Contraseña no válida, formato: 8 a 20 caracteres, con al menos una letra mayúscula y un número');
+            return;
+        }*/
         const urlBase = import.meta.env.VITE_BACK_URL;
         await axios.post(`${urlBase}auth/login`, {
             correo: email, contrasenia: password
@@ -54,13 +58,7 @@ function Login() {
             if (response.status !== 200) {
                 throw new Error('Hubo un problema al realizar la solicitud.');
             }
-        
-            // Maneja la respuesta JSON
-            const data = response.data;
-            localStorage.setItem('usuario', JSON.stringify(data.usuario));
-            // setEmail('');
-            // setPassword('');
-            navigate('/');
+            window.location.replace("/"); // Cambia la ruta y recarga la página
         }).catch((error) => {
             alert('El nombre y/o contraseña son incorrectas');
             console.error(error);
@@ -73,9 +71,7 @@ function Login() {
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
-                </Avatar>
+                    <img src="/logo.png" alt="Logo" style={{ width: '100px', height: '100px', marginBottom: '16px' }} onClick={() => navigate('/')} />
                 <Typography component="h1" variant="h5">
                     Iniciar sesión
                 </Typography>

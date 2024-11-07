@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSnackContext } from '../../../context/SnackContext';
 import { getAsignaturasImpartidasPorTutorService } from '../../../services/asignaturasServices';
+import { useUserContext } from '../../../context/UserContext';
 
 const style = {
   position: 'absolute',
@@ -29,6 +30,7 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
   const [asignaturaElegida, setAsignaturaElegida] = useState(''); // Añade un nuevo estado para almacenar la asignatura elegida
   const [descripcion, setDescripcion] = useState('');
   const { openSnack } = useSnackContext();
+  const { userInfo } = useUserContext();
 
   const getAsignaturas = async () => {
     getAsignaturasImpartidasPorTutorService(id_tutor).then((res) => {
@@ -59,7 +61,7 @@ const NuevaTutoria = ({ open, handleClose, id_tutor }) => {
     console.log("hora:", hora);
 
     console.log('Enviar solicitud');
-    const id_estudiante = JSON.parse(localStorage.getItem('usuario')).id;
+    const id_estudiante = userInfo.id;
 
     console.log("idest:", id_estudiante, "idtut:", id_tutor, asignaturaElegida, modalidad, fecha.format('YYYY-MM-DD'), hora.format('HH:mm'), descripcion);
     const fechaHora = `${fecha.format('YYYY-MM-DD')}T${hora.format('HH:mm')}:00`;
