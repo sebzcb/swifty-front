@@ -99,6 +99,7 @@ function VerTutorias() {
   }
   const handleEditarTutoriaModal = (tutoria) => {
     console.log('Editar tutoria de id ', tutoria.id);
+    console.log("TUTORIA:", tutoria);
     setTutoriaSeleccionadaEditar(tutoria);
     setOpenModalEditar(true);
   }
@@ -215,7 +216,6 @@ function VerTutorias() {
                 <TableCell>{tutoria.nombre_estudiante}</TableCell>
                 <TableCell>{tutoria.descripcion}</TableCell>
                 <TableCell>
-                  <IconButton><RemoveRedEyeIcon color='primary' /></IconButton>
                   <IconButton onClick={() => handleEditarTutoriaModal(tutoria)}><EditIcon color='success' /></IconButton>
                   <IconButton onClick={() => handleConfirmarEliminar(tutoria.id)}>
                     <DeleteIcon color='error' />

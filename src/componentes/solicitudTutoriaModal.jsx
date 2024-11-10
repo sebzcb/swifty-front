@@ -10,6 +10,7 @@ const SolicitudTutoriaModal = ({
     modalidad,
     fecha,
     hora,
+    correo,
     descripcion,
     renderSolicitudes
 }) => {
@@ -53,6 +54,9 @@ const SolicitudTutoriaModal = ({
                 </Typography>
                 <Typography id="modal-descripcion" sx={{ mt: 2 }}>
                     Nombre: {nombre}
+                </Typography>
+                <Typography sx={{ mt: 2 }}>
+                    Correo: {correo}
                 </Typography>
                 <Typography sx={{ mt: 2 }}>
                     Asignatura Elegida: {asignaturaElegida}

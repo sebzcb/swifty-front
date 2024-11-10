@@ -45,11 +45,11 @@ function Login() {
         if(!validateEmail(email)){
             alert('Correo no válido');
             return;
-        }/*
+        }
         if (!validatePassword(password)) {
             alert('Contraseña no válida, formato: 8 a 20 caracteres, con al menos una letra mayúscula y un número');
             return;
-        }*/
+        }
         const urlBase = import.meta.env.VITE_BACK_URL;
         await axios.post(`${urlBase}auth/login`, {
             correo: email, contrasenia: password
