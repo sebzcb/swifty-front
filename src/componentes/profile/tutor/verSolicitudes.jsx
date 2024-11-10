@@ -18,7 +18,8 @@ function VerSolicitudes() {
       modalidad: solicitud.modalidad,
       fecha: solicitud.fecha,
       hora: solicitud.hora,
-      descripcion: solicitud.descripcion
+      descripcion: solicitud.descripcion,
+      correo: solicitud.correo
     });
     setOpenModal(true);
   }
@@ -28,7 +29,7 @@ function VerSolicitudes() {
     const idUsuario = usuarioLocal.id;
     console.log('ID Usuario:', idUsuario);
     const response = await axios.post(`${import.meta.env.VITE_BACK_URL}usuario/solicitudes`, { id_tutor: idUsuario });
-    console.log(response.data);
+    console.log("solicitudes:",response.data);
     setSolicitudes(response.data);
   }
   useEffect(() => {

@@ -46,7 +46,7 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
                 width: 400
             }}>
                 <Typography id="modal-title" variant="h6" component="h2">
-                    Editar Tutoria
+                    Editar Tutoria de: {tutoria?.nombre_estudiante}
                 </Typography>
                 <TextField
                     label="Descripción"
@@ -55,7 +55,7 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
                     margin="normal"
                     fullWidth
                     multiline
-                    rows={4}
+                    rows={2}
                 />
                 <Select
                     label="Modalidad"
@@ -121,7 +121,6 @@ const EditarTutoriaModal = ({ setOpenModalEditar, tutoria, handleEditarTutoria }
                     type="number"
                     InputProps={{ inputProps: { min: TUTORIA_INFO.MIN_PRICE, max: TUTORIA_INFO.MAX_PRICE } }}
                     />
-
                 <Box sx={{display:'flex',gap:'10px'}}>
                 <Button onClick={() => { setOpenModalEditar(false) }} color="primary" variant="contained" sx={{ mt: 2 }}>
                     Cancelar
