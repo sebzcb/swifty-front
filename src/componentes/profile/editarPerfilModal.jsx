@@ -229,6 +229,7 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                         width: 'auto',
                         height: 'auto',
                         maxHeight: '90vh', // Para evitar que el modal sea demasiado alto
+                        minWidth: '300px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
@@ -238,7 +239,7 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                 }}
             >
                 <DialogTitle>Editar Perfil</DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{width:'100%'}}>
                     <Box marginBottom={2}>
                         <TextField name="descripcion" label="Descripción" value={usuario.descripcion} onChange={handleInputChange} fullWidth />
                     </Box>

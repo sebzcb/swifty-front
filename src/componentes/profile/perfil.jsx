@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Typography, Button, Stack, Card, CardContent, Avatar, List, ListItem, ListItemIcon, ListItemText, Paper, IconButton, Box, Chip } from '@mui/material';
+import { Typography, Button, Stack, Card, CardContent, Avatar, List, ListItem, ListItemIcon, ListItemText, Paper, IconButton, Box, Chip, useMediaQuery } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
 import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
@@ -35,6 +35,10 @@ const Perfil = () => {
     const [promedioCalificaciones, setPromedioCalificaciones] = useState(null); // Estado para almacenar el promedio
     const [estudiantes, setEstudiantes] = useState([]);
     const [asignaturasImpartidas, setAsignaturasImpartidas] = useState(null);
+
+    // Detectar si el usuario está en un dispositivo móvil
+    const isMobile = useMediaQuery('(max-width:600px)');
+    console.log("is mobile:", isMobile);
     const handleOpenTutor = () => {
         if(!userInfo) {
             navigate('/login');
@@ -167,7 +171,7 @@ const Perfil = () => {
 
     return (
         <>
-            <Card sx={{ boxShadow: 3, borderRadius: 2, overflow: 'hidden' }}>
+            <Card sx={{ boxShadow: 3, borderRadius: 2, overflow: 'hidden', maxWidth: isMobile ? '100%' : '600px', margin: 'auto' }}>
                 <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '10px', justifyContent: 'space-between' }}>
                         <Avatar sx={{ bgcolor: deepOrange[500], width: '60px', height: '60px' }}>

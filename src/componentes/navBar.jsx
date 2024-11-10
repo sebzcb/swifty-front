@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, Button, Container, IconButton, Avatar, Badge, Menu, MenuItem } from '@mui/material';  
+import { AppBar, Toolbar, Typography, Button, Container, IconButton, Avatar, Badge, Menu, MenuItem, useMediaQuery } from '@mui/material';  
 import SchoolIcon from '@mui/icons-material/School';
 import MenuIcon from '@mui/icons-material/Menu';
 import { deepOrange } from '@mui/material/colors';
@@ -11,6 +11,7 @@ import { useUserContext } from '../context/UserContext';
 import { logoutService } from '../services/usersServices';
 
 function Navbar() {
+    const isMobile = useMediaQuery('(max-width:600px)');
     const { userInfo } = useUserContext();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -79,9 +80,13 @@ function Navbar() {
                     <Container style={{ flexGrow: 1, display: 'flex', flexDirection: 'row', gap:'20px' }}>
                         <Button color="inherit" onClick={handleHome}>
                             <img src="/logo.png" alt="Logo" style={{ width: '60px', height: '60px'}} onClick={() => navigate('/')} />
-                            <Typography variant="h6" >
+                           {
+                                 !isMobile &&
+                           
+                           <Typography variant="h6" >
                                 Swifty
                             </Typography>
+                           } 
                         </Button>
                         {
                             userInfo != null && userInfo.rol === ROL.ESTUDIANTE &&
@@ -127,10 +132,12 @@ function Navbar() {
                                 }
                                 <MenuItem onClick={cerrarSesion} style={{color: 'red'}}>Cerrar Sesión</MenuItem>
                             </Menu>
-
+                            {
+                                !isMobile &&
                             <IconButton color="inherit" onClick={verPerfil}>
                                 <Avatar sx={{ bgcolor: deepOrange[500] }}>{userInfo.nombre[0]}</Avatar>
                             </IconButton>
+                            }
                         </>
                     }
                 </Toolbar>
