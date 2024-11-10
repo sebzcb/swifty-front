@@ -8,6 +8,7 @@ import { REPORT_STATE } from "../../constants/reportState";
 import { editReporteService } from "../../services/reportsService";
 
 const ModalReport = ({ open, setOpen, report, renderFunction }) => {
+    console.log("entro modal report")
     const { openSnack } = useSnackContext();
     const navigate = useNavigate();
     const [usuarioReporto, setUsuarioReporto] = useState(null); // Quien hizo el reporte
@@ -17,6 +18,8 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
     const reportsState = Object.values(REPORT_STATE);
     const loadUserReportAutor = async () => {
         // Lógica para obtener el usuario que reportó
+        console.log("==================================")
+        console.log("id_usuario_reporto:", id_usuario_reporto);
         getUserService(id_usuario_reporto).then((response) => {
             if (response && response.data) {
                 setUsuarioReporto(response.data);
@@ -51,8 +54,8 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
             console.log(error);
         });
     }
-
-    if (!usuarioReporto) { return null; }
+    console.log("usuario reoprt...", usuarioReporto);
+    // if (!usuarioReporto) { return null; }
 
     const verPerfil = (e) => {
         e.preventDefault();
@@ -93,15 +96,21 @@ const ModalReport = ({ open, setOpen, report, renderFunction }) => {
                         {/* Información del usuario que reportó */}
                         <Box width="48%">
                             <Typography variant="subtitle1" gutterBottom><strong>Usuario que reportó:</strong></Typography>
-                            <Typography variant="body1"><strong>Nombre:</strong> {usuarioReporto.nombre}</Typography>
-                            <Typography variant="body1"><strong>Correo:</strong> {usuarioReporto.correo}</Typography>
-                            <Typography variant="body1"><strong>Teléfono:</strong> {usuarioReporto.telefono}</Typography>
                             {
                                 usuarioReporto ? (
-                                    <Button variant="contained" color="primary" onClick={verPerfilUsuarioReporto} sx={{ m: '10px' }}>
-                                        Ver perfil
-                                    </Button>
-                                ) : <Button variant="contained" color="primary" disabled sx={{ m: '10px' }}>Ver perfil</Button>
+                                    <>
+                                        <Typography variant="body1"><strong>Nombre:</strong> {usuarioReporto.nombre}</Typography>
+                                        <Typography variant="body1"><strong>Correo:</strong> {usuarioReporto.correo}</Typography>
+                                        <Typography variant="body1"><strong>Teléfono:</strong> {usuarioReporto.telefono}</Typography>
+                                        <Button variant="contained" color="primary" onClick={verPerfilUsuarioReporto} sx={{ m: '10px' }}>
+                                            Ver perfil
+                                        </Button>
+                                    </>
+                                ) :
+                                    <>
+                                        <Typography variant="body1">Usuario ya no existe</Typography>
+                                        <Button variant="contained" color="primary" disabled sx={{ m: '10px' }}>Ver perfil</Button>
+                                    </>
 
                             }
                         </Box>

@@ -1,8 +1,10 @@
 // utils/useIsMobile.js
-import { useState, useEffect } from 'react';
+import { useMediaQuery } from '@mui/material';
+//import { useState, useEffect } from 'react';
 
 const useIsMobile = () => {
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const isMobile = useMediaQuery('(max-width:768px)');
+/*    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
@@ -16,7 +18,7 @@ const useIsMobile = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
+*/
     return isMobile;
 };
 
