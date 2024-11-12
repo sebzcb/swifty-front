@@ -9,6 +9,8 @@ import { TUTORIA_INFO } from "./tutor/tutoriainfo";
 import { useUserContext } from "../../context/UserContext";
 import { ROL } from "../../constants/rol";
 
+const MAX_DESCRIPTION_LENGTH = 300;
+const MAX_DISCORD_LENGTH = 50;
 const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
     const {userInfo,userInfoLoading} = useUserContext();    
     const [universidades, setUniversidades] = useState([]);
@@ -74,11 +76,17 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
     }, []);
 
     const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        if (name === "descripcion" && value.length > MAX_DESCRIPTION_LENGTH) {
+            openSnack('Máximos caracteres alcanzados', 'error');
+            return;
+        }
         setUsuario({
             ...usuario,
-            [event.target.name]: event.target.value
+            [name]: value
         });
     }
+
     const handleSubmit = async () => {
         //check data
         if (!usuario) return;
@@ -92,6 +100,8 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                 return;
             }
         }
+        console.log("FEcha nacimiento:", usuario.fechanacimiento);
+        console.log("discord:", usuario.nombrediscord);
         try {
             const res = await axios.put(`${import.meta.env.VITE_BACK_URL}usuario/update`, usuario);
             console.log("RES:", res.data);
@@ -241,7 +251,15 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                 <DialogTitle>Editar Perfil</DialogTitle>
                 <DialogContent sx={{width:'100%'}}>
                     <Box marginBottom={2}>
-                        <TextField name="descripcion" label="Descripción" value={usuario.descripcion} onChange={handleInputChange} fullWidth />
+                        <TextField
+                            name="descripcion"
+                            label="Descripción"
+                            value={usuario.descripcion}
+                            onChange={handleInputChange}
+                            fullWidth
+                            inputProps={{ maxLength: MAX_DESCRIPTION_LENGTH }}
+                            helperText={`${usuario.descripcion.length}/${MAX_DESCRIPTION_LENGTH} caracteres`}
+                        />
                     </Box>
                     <Box marginBottom={2}>
                         <Select name="genero" value={usuario.genero} onChange={handleInputChange} fullWidth>
@@ -250,7 +268,7 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                         </Select>
                     </Box>
                     <Box marginBottom={2}>
-                        <TextField name="telefono" label="Teléfono" value={usuario.telefono} onChange={handleInputChange} fullWidth />
+                        <TextField name="telefono" label="Teléfono" value={usuario.telefono} onChange={handleInputChange} fullWidth helperText="Formato: 56912345678 o No especificado" />
                     </Box>
                     <Box marginBottom={2}>
                         <Select name="id_universidad" value={usuario.id_universidad} onChange={handleInputChange} fullWidth>
@@ -259,9 +277,35 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                             ))}
                         </Select>
                     </Box>
+                    <Box marginBottom={2}>
+                        {/* Fecha nacimiento */}
+                        <TextField
+                            name="fechanacimiento"
+                            label="Fecha de nacimiento"
+                            type="date"
+                            value={usuario.fechanacimiento}
+                            onChange={handleInputChange}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            fullWidth
+                        />
+                    </Box>
                     {
                         isTutor && (
                             <>
+                                {/* Discord */}
+                                <Box marginBottom={2}>
+                                    <TextField
+                                        name="nombrediscord"
+                                        label="Discord"
+                                        value={usuario.nombrediscord ?? ""}
+                                        onChange={handleInputChange}
+                                        fullWidth
+                                        inputProps={{ maxLength: MAX_DISCORD_LENGTH }}
+                                        helperText={`${usuario.nombrediscord?.length}/${MAX_DISCORD_LENGTH} caracteres`}
+                                    />
+                                </Box>
                                 <Divider sx={{ width: '100%', pb: '20px' }} />
                                 <Typography gutterBottom variant="h6">
                                     Asignaturas impartidas
@@ -300,9 +344,6 @@ const EditarPerfilModal = ({ open, setOpen, id_usuario, renderFunction }) => {
                                 <Button variant="contained" color="primary" onClick={handleAddAsignaturaImpartida} sx={{ mt: 2 }}>
                                     Agregar asignatura
                                 </Button>
-                                <Typography variant="h6" sx={{ mt: 2 }}>
-                                    Asignaturas impartidas
-                                </Typography>
                                 <Paper elevation={3} sx={{ width: '100%', mt: 2 }}>
                                     <List>
                                         {

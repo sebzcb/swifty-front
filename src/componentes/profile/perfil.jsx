@@ -20,6 +20,7 @@ import { getEstudiantesSolicitudesDeTutor } from '../../services/tutoresServices
 import { getAsignaturasImpartidasPorTutorService } from '../../services/asignaturasServices';
 import { getUserService } from '../../services/usersServices';
 import { useUserContext } from '../../context/UserContext';
+import DiscordIcon from '../../assets/discord.svg';
 
 const Perfil = () => {
     const { userInfo } = useUserContext();
@@ -35,6 +36,7 @@ const Perfil = () => {
     const [promedioCalificaciones, setPromedioCalificaciones] = useState(null); // Estado para almacenar el promedio
     const [estudiantes, setEstudiantes] = useState([]);
     const [asignaturasImpartidas, setAsignaturasImpartidas] = useState(null);
+    const [showFullDescription, setShowFullDescription] = useState(false); // Estado para controlar la visualización de la descripción completa
 
     // Detectar si el usuario está en un dispositivo móvil
     const isMobile = useMediaQuery('(max-width:600px)');
@@ -168,6 +170,16 @@ const Perfil = () => {
         }
         return ''; // En caso de promedios fuera de rango por seguridad
     };
+    const formatFecha = (fecha) => {
+        if(!fecha) return 'No especificado';
+        if(fecha === '') return 'No especificado';
+        const fechaArray = fecha.split('-');
+        return `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`; // Se invierte el orden de los elementos
+    }
+
+    const toggleDescription = () => {
+        setShowFullDescription(!showFullDescription);
+    }
 
     return (
         <>
@@ -196,7 +208,12 @@ const Perfil = () => {
                         </Stack>
                     ) : null}
                     <Typography variant="body2" sx={{ wordBreak: 'break-word', marginTop: 2 }}>
-                        {usuario?.descripcion}
+                        {showFullDescription ? usuario?.descripcion : `${usuario?.descripcion?.substring(0, 100)}...`}
+                        {usuario?.descripcion && usuario?.descripcion.length > 100 && (
+                            <Button onClick={toggleDescription} sx={{ textTransform: 'none', padding: 0, marginLeft: 1 }}>
+                                {showFullDescription ? 'Ver menos' : 'Ver más'}
+                            </Button>
+                        )}
                     </Typography>
                     {usuarioExterno === false ? (
                         <Button color="primary" onClick={() => handleEditarPerfil()} sx={{ marginTop: 2 }}>
@@ -281,8 +298,17 @@ const Perfil = () => {
                             <ListItemIcon sx={{ color: 'primary.main' }}>
                                 <EventIcon />
                             </ListItemIcon>
-                            <ListItemText primary={usuario?.fechanacimiento == '' ? 'No especificada' : usuario?.fechanacimiento} />
+                            <ListItemText primary={usuario?.fechanacimiento == '' ? 'No especificada' : formatFecha(usuario?.fechanacimiento)} />
                         </ListItem>
+                        {
+                             usuario?.id_tutor && 
+                             <ListItem>
+                                 <ListItemIcon sx={{ color: 'primary.main' }}>
+                                     <img src={DiscordIcon} alt="Discord" style={{ width: '24px', height: '24px' }} />
+                                 </ListItemIcon>
+                                 <ListItemText primary={usuario?.nombrediscord ? usuario.nombrediscord : 'No especificado'} />
+                             </ListItem>
+                        }
                     </List>
                 </CardContent>
             </Card>
