@@ -44,7 +44,6 @@ function Home() {
         getAsignaturas();
     }, []);
     const CardHome = ({ nombre ,codigo}) => {
-        //http://localhost:5173/search?keyword=d&page=1&limit=9&order=valoracion&direction=desc&asignaturas=
         return (
             <Card sx={{
                 ":hover": {

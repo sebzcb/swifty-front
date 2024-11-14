@@ -18,7 +18,10 @@ const EditModalAdmin = ({ open, setOpen,username,id,rol,renderFunction}) => {
             const nombre = user.nombre;
             console.log('email:', email);
             const subject = 'Actualización de rol';
-            const message = `Hola ${nombre}, tu rol ha sido actualizado a ${rolUpdate}`;
+            let message = `Hola ${nombre}, tu rol ha sido actualizado a ${rolUpdate}\n\n`;
+            if(rolUpdate == ROL.TUTOR){
+                message += 'Ahora puedes gestionar tus asignaturas impartidas desde "Editar perfil" y gestionar tus tutorías';
+            }
             console.log('message:', message);
             sendEmail(email, subject, message);
         }).catch((error) => {
