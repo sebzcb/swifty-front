@@ -44,20 +44,36 @@ Swifty se está desarrollando como respuesta a los desafíos de aprobar una asig
     git clone https://github.com/sebzcb/swifty-front
     ```
 
-2. Instalar las dependencias:
+2. Acceder al proyecto:
+    ```bash
+    cd swifty-front
+    ```
+
+3. Instalar las dependencias:
     ```bash
     npm install
     ```
 
-3. Ejecutar el servidor de desarrollo:
+4. Ejecutar el servidor de desarrollo:
     ```bash
     npm run dev
     ```
 
-4. Si se quiere construir el proyecto para producción:
+5. Si se quiere construir el proyecto para producción:
     ```bash
     npm run build
     ```
+
+## Al eliminar usuario
+
+Puede ocurrir que el usuario eliminado no pueda ver Swifty. En ese caso, sigue estos pasos:
+
+1. Abre las herramientas de desarrollador (F12).
+2. Ve a la pestaña "Aplicación".
+3. En la sección "Cookies", selecciona `http://localhost:5173`.
+4. Selecciona el objeto que dice "session".
+5. Haz clic en la "X" de arriba para eliminar la sesión.
+6. Recarga la página.
 
 ## Plugins oficiales disponibles
 
